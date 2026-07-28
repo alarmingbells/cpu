@@ -1,0 +1,41 @@
+//
+//Written by GowinSynthesis
+//Tool Version "V1.9.12 (64-bit)"
+//Wed Jul 15 16:11:49 2026
+
+//Source file index table:
+//file0 "\C:/Users/funlu/Desktop/cpu/TC1_8bit/src/cpu_top.v"
+`timescale 100 ps/100 ps
+module main (
+  clk,
+  not_clk
+)
+;
+input clk;
+output not_clk;
+wire clk_d;
+wire not_clk_d_5;
+wire VCC;
+wire GND;
+  IBUF clk_ibuf (
+    .O(clk_d),
+    .I(clk) 
+);
+  OBUF not_clk_obuf (
+    .O(not_clk),
+    .I(not_clk_d_5) 
+);
+  INV not_clk_d_s0 (
+    .O(not_clk_d_5),
+    .I(clk_d) 
+);
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+  GSR GSR (
+    .GSRI(VCC) 
+);
+endmodule /* main */

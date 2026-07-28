@@ -1,0 +1,17 @@
+-d C:\Users\funlu\Desktop\cpu\TC1_8bit\impl\gwsynthesis\cpu8take1.vg
+-p GW2AR-18-QFN88-8
+-pn GW2AR-LV18QN88C8/I7
+-cst C:\Users\funlu\Desktop\cpu\TC1_8bit\src\setup.cst
+-cfg C:\Users\funlu\Desktop\cpu\TC1_8bit\impl\pnr\device.cfg
+-bit
+-tr
+-ph
+-timing
+-cst_error
+-convert_sdp32_36_to_sdp16_18
+-place_option 0
+-route_option 0
+-clock_route_order 0
+-correct_hold 1
+-route_maxfan 23
+-global_freq 100.000

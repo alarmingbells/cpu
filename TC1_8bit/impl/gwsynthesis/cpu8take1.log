@@ -1,0 +1,4 @@
+GowinSynthesis start
+Running parser ...
+ERROR (EX5998) : Cannot open Verilog file 'C:\Users\funlu\Desktop\cpu\TC1_8bit\src\cpu_top.v'
+GowinSynthesis finish
