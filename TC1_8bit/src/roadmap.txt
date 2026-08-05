@@ -1,0 +1,20 @@
+0 Operation type
+0 Operation type
+0 Address mode
+0 Address mode
+0 Sub-op
+0 Sub-op
+0 Sub-op
+0 Sub-op
+
+Operation types:
+00: alu
+01: register transfer
+10: jump
+11: 
+
+Address modes:
+00: b register
+01: memory address
+10: indirect memory address
+11: pc
