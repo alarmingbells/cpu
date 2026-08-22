@@ -8,6 +8,7 @@ module testbench;
     wire [7:0] A_Dir;
     wire [7:0] B_Dir;
     wire [15:0] PC_Dir;
+    wire [15:0] PC
     reg bus_sending;
 
     reg [3:0] ALU_Ctrl;
@@ -50,7 +51,8 @@ module testbench;
         .A_Dir(A_Dir),
         .B_Dir(B_Dir),
         .PC_Dir(PC_Dir),
-        .PC_Dir_L(PC_Dir_L)
+        .PC_Dir_L(PC_Dir_L),
+        .PC_Dir_out(PC)
     );
 
     PCmover PCmover (
@@ -85,13 +87,8 @@ module testbench;
         $dumpfile("testbench_waveform.vcd");
         $dumpvars(0, testbench);
 
+        //dummy test control unit
         #30 rst_n = 1; //reset high
-        #10 bus_sending = 1; A_L = 1; //load 12 into A
-        #20
-        #20 A_L = 0; A_E = 1; JMP_ctrl = 4'b0001;
-        #20 A_E = 0; JMP_ctrl = 4'd0;
-        #80
-
 
         $finish;
     end

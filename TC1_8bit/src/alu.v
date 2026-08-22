@@ -22,9 +22,8 @@ module ALU (
     always @(negedge clk) begin
         if (rst_n) begin
             if (ALU_Ctrl != 4'b0000) begin
-                active = 1; 
                 case (ALU_Ctrl)
-                    4'b0001 : sum = (A_Dir + bus);
+                    4'b0001 : sum = (A_Dir + bus); //self explanatory arithmetic
                     4'b0010 : sum = (A_Dir - bus);
                     4'b0011 : sum = (A_Dir & bus);
                     4'b0100 : sum = (A_Dir | bus);
@@ -40,6 +39,7 @@ module ALU (
                     4'b1100 : sum = (8'b1) ? (A_Dir >= bus) : 8'd0;
                     4'b1101 : sum = (8'b1) ? (A_Dir <= bus) : 8'd0;
                 endcase
+                active = 1; 
             end else active = 0;
         end else active = 0;
     end;
@@ -75,19 +75,16 @@ module PCmover (
     always @(negedge clk) begin
         if (rst_n) begin
             if (JMP_ctrl != 4'b0000) begin
-                active = 1;
                 case (JMP_ctrl)
-                    4'b0001 : begin
-                        PC_upd = bus;
-                        active = 1;
-                    end
-                    4'b0010 : begin
+                    4'b0001 : PC_upd = bus; //set PC to bus
+                    4'b0010 : begin //set PC to bus if A != 0
                         if (A_Dir != 7'd0) begin
                             PC_upd = bus;
                             active = 1;
                         end
                     end
                 endcase
+                active = 1;
             end else active = 0;
         end else active = 0;
     end
