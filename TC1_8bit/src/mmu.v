@@ -2,14 +2,14 @@ module MMU (
         input clk,
         input rst_n,
 
-        input [3:0] MMU_Ctrl;
+        inout [7:0] bus,
 
-        inout data_out;
-        output addr_out;
+        input [3:0] MMU_Ctrl,
 
-        input [15:0] PC;
+        inout [7:0] data_out,
+        output [15:0] addr_out,
 
-        inout [7:0] bus;
+        input [15:0] PC
     );
 
     reg active_internal;
@@ -26,8 +26,8 @@ module MMU (
 
     assign bus = (active_internal) ? out : 8'bZ;
 
-    assign data_out = (write) ? data_external : Z;
-    assign addr_out = (read || write) ? addr_external : Z;
+    assign data_out = (write) ? data_external : 8'bZ;
+    assign addr_out = (read || write) ? addr_external : 16'bZ;
 
     always @(posedge clk) begin
         if (MMU_Ctrl != 4'b0000) begin
@@ -43,6 +43,7 @@ module MMU (
                     out <= data_out;
                     read <= 1;
                     active_internal <= 1;
+                end
             endcase
         end else begin
             active_internal <= 0;
@@ -54,9 +55,9 @@ module MMU (
         if (MMU_Ctrl != 4'b0000) begin
             case (MMU_Ctrl)
                 4'b0001 : address[7:0] <= bus; //load low byte of addr
-                4'b0010 : address[15:8] < bus; //load high byte of addr
+                4'b0010 : address[15:8] <= bus; //load high byte of addr
                 4'b0100 : begin //load system bus into memory at address buffer
-                    addr_external <= addrress;
+                    addr_external <= address;
                     data_external <= bus;
                     write <= 1;
                 end

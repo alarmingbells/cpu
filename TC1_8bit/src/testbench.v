@@ -8,13 +8,14 @@ module testbench;
     wire [7:0] A_Dir;
     wire [7:0] B_Dir;
     wire [15:0] PC_Dir;
-    wire [15:0] PC
-    reg bus_sending;
+    wire [15:0] PC;
 
     reg [3:0] ALU_Ctrl;
     reg [3:0] JMP_ctrl;
+    reg [3:0] MMU_Ctrl;
 
-    assign bus = (bus_sending) ? 8'd12 : 8'bZ;
+    wire [7:0] data_ext;
+    wire [15:0] addr_ext;
 
     reg A_E;
     reg B_E;
@@ -65,6 +66,16 @@ module testbench;
         .A_Dir(A_Dir)
     );
 
+    MMU MMU (
+        .clk(clk),
+        .rst_n(rst_n),
+        .bus(bus),
+        .MMU_Ctrl(MMU_Ctrl),
+        .data_out(data_ext),
+        .addr_out(addr_ext),
+        .PC(PC)
+    );
+
     always begin
         #10 clk = ~clk; 
     end
@@ -72,8 +83,11 @@ module testbench;
     initial begin
         clk = 0;
         rst_n = 0;
-        bus_sending = 0;
+
         ALU_Ctrl = 0;
+        JMP_ctrl = 0;
+        MMU_Ctrl = 0;
+
 
         A_E = 0;
         A_L = 0;
