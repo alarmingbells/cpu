@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
 module testbench;
-
     reg clk;
     reg rst_n;
     wire [7:0] bus;
@@ -17,6 +16,7 @@ module testbench;
 
     wire [7:0] data_ext;
     wire [15:0] addr_ext;
+    wire rW;
 
     reg A_E;
     reg B_E;
@@ -29,10 +29,7 @@ module testbench;
     
     wire PC_Dir_L;
 
-        reg test_bus;
-        reg [7:0] bus_value;
-
-        assign bus = (test_bus) ? bus_value : 8'bZ;
+    reg [7:0] rom [0:16];
 
     ALU ALU (
         .clk(clk),
@@ -80,21 +77,22 @@ module testbench;
         .MMU_Ctrl(MMU_Ctrl),
         .data_out(data_ext),
         .addr_out(addr_ext),
+        .rW(rW),
         .PC(PC)
     );
 
+    assign data_ext = (!rW) ? rom[addr_ext] : 8'bZ;
+
     always begin
         #10 clk = ~clk; 
+        if (!rW) rom[addr_ext] <= data_ext;
     end
 
     initial begin
+        $readmemh("test_rom.txt", rom);
+
         clk = 0;
         rst_n = 0;
-
-        ALU_Ctrl = 0;
-        JMP_ctrl = 0;
-        MMU_Ctrl = 0;
-
 
         A_E = 0;
         A_L = 0;
@@ -108,15 +106,8 @@ module testbench;
         $dumpfile("testbench_waveform.vcd");
         $dumpvars(0, testbench);
 
-        //dummy test control unit
-        #30 rst_n = 1; //reset high
-        #20 test_bus = 1; bus_value = 8'd15; //set bus to 15
-        #20 MMU_Ctrl = 4'b0001; //load mmu address low
-        #20 bus_value = 8'd7;
-        #20 MMU_Ctrl = 4'b0010; //load mmu address high
-        #20 test_bus = 0;
-        #20 MMU_Ctrl = 4'b0011; //mmu load command
-        #80
+        #30 rst_n = 1;
+        #320;
 
         $finish;
     end

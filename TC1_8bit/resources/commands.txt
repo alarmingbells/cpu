@@ -1,0 +1,1 @@
+iverilog -o sim testbench.v registers.v alu.v mmu.v cu.v

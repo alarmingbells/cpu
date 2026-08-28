@@ -13,11 +13,11 @@ module CU (
         output reg A_E,
         output reg A_L,
         output reg B_E,
-        output reg B_L    
-        output reg PCH_L;
-        output reg PCH_E;
-        output reg PCL_L;
-        output reg PCL_E;
+        output reg B_L,
+        output reg PCH_L,
+        output reg PCH_E,
+        output reg PCL_L,
+        output reg PCL_E
     );
 
     //0 - instruction load
@@ -33,7 +33,6 @@ module CU (
     reg [7:0] out;
 
     assign bus = (bus_enable) ? out : 8'bZ;
-
 
     always @(negedge clk) begin
         ALU_Ctrl = 4'd0;
@@ -94,7 +93,7 @@ module CU (
                 end
                 2 : begin
                     PC_inc <= 0;
-                    case (instruction[0:1])
+                    case (instruction[1:0])
                         2'b00 : begin //ALU operation
                             if (instruction[2]) begin //memory address
                                 MMU_Ctrl <= 4'b0011;
@@ -105,10 +104,10 @@ module CU (
                                     PCL_E <= 1;
                                 end
                             end
-                            ALU_Ctrl <= instruction[4:7];
+                            ALU_Ctrl <= instruction[7:4];
                         end
                         2'b01 : begin //register transfer
-                            case (instruction[4:7])
+                            case (instruction[7:4])
                                 4'b0001 : begin // A to target
                                     A_E <= 1;
                                     if (instruction[2]) begin //memory address
@@ -160,7 +159,7 @@ module CU (
                             endcase
                         end
                         2'b10 : begin //jump
-                            JMP_Ctrl <= instruction[4:7];
+                            JMP_Ctrl <= instruction[7:4];
                         end
                     endcase
                 end
@@ -173,12 +172,22 @@ module CU (
         waiting <= 0;
         operand <= 0;
 
-        control <= 4'd0;
-        unit_select <= 4'd0;
-
         instruction <= 8'd0;
 
         PC_inc <= 1;
+
+        ALU_Ctrl <= 4'd0;
+        JMP_Ctrl <= 4'd0;
+        MMU_Ctrl <= 4'd0;
+
+        A_E <= 0;
+        A_L <= 0;
+        B_E <= 0;
+        B_L <= 0;
+        PCH_L <= 0;
+        PCH_E <= 0;
+        PCL_L <= 0;
+        PCL_E <= 0;
 
         bus_enable <= 0;
         out <= 8'd0;
