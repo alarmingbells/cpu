@@ -14,6 +14,8 @@ module registers (
         input PCL_L,
         input PC_Dir_L,
 
+        input PC_inc,
+
         output [7:0] A_Dir,
         output [7:0] B_Dir,
         input [15:0] PC_Dir,
@@ -44,10 +46,11 @@ module registers (
             PC <= (PC_Dir_L) ? PC_Dir : PC;
         end
     end
-;
+
     always @(posedge clk) begin
         if (rst_n) begin
-            PC <= PC + 1;
+            if (PC_inc)
+                PC <= PC + 1;
         end else begin
             PC <= 16'd0;
         end

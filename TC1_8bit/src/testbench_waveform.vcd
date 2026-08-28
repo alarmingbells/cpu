@@ -1,5 +1,5 @@
 $date
-	Wed Aug 05 00:19:27 2026
+	Sun Aug 23 20:44:05 2026
 $end
 $version
 	Icarus Verilog
@@ -9,65 +9,87 @@ $timescale
 $end
 $scope module testbench $end
 $var wire 8 ! bus [7:0] $end
-$var wire 1 " PC_Dir_L $end
-$var wire 16 # PC_Dir [15:0] $end
-$var wire 8 $ B_Dir [7:0] $end
-$var wire 8 % A_Dir [7:0] $end
-$var reg 4 & ALU_Ctrl [3:0] $end
-$var reg 1 ' A_E $end
-$var reg 1 ( A_L $end
-$var reg 1 ) B_E $end
-$var reg 1 * B_L $end
-$var reg 4 + JMP_ctrl [3:0] $end
-$var reg 1 , PCH_E $end
-$var reg 1 - PCH_L $end
-$var reg 1 . PCL_E $end
-$var reg 1 / PCL_L $end
-$var reg 1 0 bus_sending $end
-$var reg 1 1 clk $end
-$var reg 1 2 rst_n $end
+$var wire 8 " data_ext [7:0] $end
+$var wire 16 # addr_ext [15:0] $end
+$var wire 1 $ PC_Dir_L $end
+$var wire 16 % PC_Dir [15:0] $end
+$var wire 16 & PC [15:0] $end
+$var wire 8 ' B_Dir [7:0] $end
+$var wire 8 ( A_Dir [7:0] $end
+$var reg 4 ) ALU_Ctrl [3:0] $end
+$var reg 1 * A_E $end
+$var reg 1 + A_L $end
+$var reg 1 , B_E $end
+$var reg 1 - B_L $end
+$var reg 4 . JMP_ctrl [3:0] $end
+$var reg 4 / MMU_Ctrl [3:0] $end
+$var reg 1 0 PCH_E $end
+$var reg 1 1 PCH_L $end
+$var reg 1 2 PCL_E $end
+$var reg 1 3 PCL_L $end
+$var reg 8 4 bus_value [7:0] $end
+$var reg 1 5 clk $end
+$var reg 1 6 rst_n $end
+$var reg 1 7 test_bus $end
 $scope module ALU $end
-$var wire 4 3 ALU_Ctrl [3:0] $end
-$var wire 1 4 ALU_regselect $end
-$var wire 8 5 bus [7:0] $end
-$var wire 1 1 clk $end
-$var wire 1 2 rst_n $end
-$var wire 8 6 B_Dir [7:0] $end
-$var wire 8 7 A_Dir [7:0] $end
-$var reg 1 8 active $end
-$var reg 8 9 out [7:0] $end
-$var reg 8 : sum [7:0] $end
+$var wire 4 8 ALU_Ctrl [3:0] $end
+$var wire 8 9 bus [7:0] $end
+$var wire 1 5 clk $end
+$var wire 1 6 rst_n $end
+$var wire 8 : B_Dir [7:0] $end
+$var wire 8 ; A_Dir [7:0] $end
+$var reg 1 < active $end
+$var reg 8 = out [7:0] $end
+$var reg 8 > sum [7:0] $end
+$upscope $end
+$scope module MMU $end
+$var wire 4 ? MMU_Ctrl [3:0] $end
+$var wire 8 @ bus [7:0] $end
+$var wire 1 5 clk $end
+$var wire 1 6 rst_n $end
+$var wire 1 A rW $end
+$var wire 8 B data_out [7:0] $end
+$var wire 16 C addr_out [15:0] $end
+$var wire 16 D PC [15:0] $end
+$var reg 1 E active_internal $end
+$var reg 16 F addr_external [15:0] $end
+$var reg 16 G address [15:0] $end
+$var reg 8 H data_external [7:0] $end
+$var reg 8 I out [7:0] $end
+$var reg 1 J read $end
+$var reg 1 K write $end
 $upscope $end
 $scope module PCmover $end
-$var wire 4 ; JMP_ctrl [3:0] $end
-$var wire 1 " PC_Dir_L $end
-$var wire 8 < bus [7:0] $end
-$var wire 1 1 clk $end
-$var wire 1 2 rst_n $end
-$var wire 16 = PC_Dir [15:0] $end
-$var wire 8 > A_Dir [7:0] $end
-$var reg 16 ? PC_upd [15:0] $end
-$var reg 1 @ active $end
+$var wire 4 L JMP_ctrl [3:0] $end
+$var wire 1 $ PC_Dir_L $end
+$var wire 8 M bus [7:0] $end
+$var wire 1 5 clk $end
+$var wire 1 6 rst_n $end
+$var wire 16 N PC_Dir [15:0] $end
+$var wire 8 O A_Dir [7:0] $end
+$var reg 16 P PC_upd [15:0] $end
+$var reg 1 Q active $end
 $upscope $end
 $scope module registers $end
-$var wire 8 A A_Dir [7:0] $end
-$var wire 1 ' A_E $end
-$var wire 1 ( A_L $end
-$var wire 8 B B_Dir [7:0] $end
-$var wire 1 ) B_E $end
-$var wire 1 * B_L $end
-$var wire 1 , PCH_E $end
-$var wire 1 - PCH_L $end
-$var wire 1 . PCL_E $end
-$var wire 1 / PCL_L $end
-$var wire 16 C PC_Dir [15:0] $end
-$var wire 1 " PC_Dir_L $end
-$var wire 8 D bus [7:0] $end
-$var wire 1 1 clk $end
-$var wire 1 2 rst_n $end
-$var reg 8 E A [7:0] $end
-$var reg 8 F B [7:0] $end
-$var reg 16 G PC [15:0] $end
+$var wire 8 R A_Dir [7:0] $end
+$var wire 1 * A_E $end
+$var wire 1 + A_L $end
+$var wire 8 S B_Dir [7:0] $end
+$var wire 1 , B_E $end
+$var wire 1 - B_L $end
+$var wire 1 0 PCH_E $end
+$var wire 1 1 PCH_L $end
+$var wire 1 2 PCL_E $end
+$var wire 1 3 PCL_L $end
+$var wire 16 T PC_Dir [15:0] $end
+$var wire 1 $ PC_Dir_L $end
+$var wire 16 U PC_Dir_out [15:0] $end
+$var wire 8 V bus [7:0] $end
+$var wire 1 5 clk $end
+$var wire 1 6 rst_n $end
+$var reg 8 W A [7:0] $end
+$var reg 8 X B [7:0] $end
+$var reg 16 Y PC [15:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -76,133 +98,213 @@ $dumpall
 $end
 #0
 $dumpvars
+bx Y
+bx X
+bx W
+bx V
+bx U
+bz T
+bx S
+bx R
+0Q
+bx P
+bx O
+bz N
+bx M
+b0 L
+0K
+xJ
+bx I
+bx H
 bx G
 bx F
-bx E
-bz D
-bz C
-bx B
-bx A
-0@
-bx ?
+0E
+bx D
+bx C
+bz B
+xA
+bx @
+b0 ?
 bx >
-bz =
-bz <
+bx =
+0<
 bx ;
 bx :
 bx 9
-08
-bx 7
-bx 6
-bz 5
-z4
-b0 3
+b0 8
+x7
+06
+05
+bx 4
+03
 02
 01
 00
-0/
-0.
+b0 /
+b0 .
 0-
 0,
-bx +
+0+
 0*
-0)
-0(
-0'
-b0 &
-bx %
-bx $
-bz #
-0"
-bz !
+b0 )
+bx (
+bx '
+bx &
+bz %
+0$
+bx #
+bz "
+bx !
 $end
 #10000
-b0 G
-11
-#20000
-01
-#30000
-b1 G
-bx 9
-b0 :
-b0 $
-b0 6
-b0 B
-b0 F
-b0 %
-b0 7
-b0 >
-b0 A
-b0 E
-b0 ?
-11
-12
-#40000
-b1100 %
-b1100 7
-b1100 >
-b1100 A
-b1100 E
-b1100 !
-b1100 5
-b1100 <
-b1100 D
-01
-1(
-10
-#50000
-b0 9
-b10 G
-11
-#60000
-01
-#70000
-b11 G
-11
-#80000
-bz G
-b1100 #
-b1100 =
-b1100 C
-b1100 ?
-1"
-1@
-01
-b1 +
-b1 ;
-1'
-0(
-#90000
-bx G
-11
-#100000
-b1100 G
 bz #
-bz =
 bz C
-0"
-0@
-01
-b0 +
+zA
+b0 &
+b0 D
+b0 U
+b0 Y
+0J
+15
+#20000
+05
+#30000
+b1 &
+b1 D
+b1 U
+b1 Y
+bx =
+b0 >
+b0 '
+b0 :
+b0 S
+b0 X
+b0 (
 b0 ;
-0'
-#110000
-b1101 G
-11
-#120000
-01
-#130000
-b1110 G
-11
-#140000
-01
-#150000
+b0 O
+b0 R
+b0 W
+b0 P
+b0 G
+b0 F
+b0 H
+b0 I
+15
+16
+#40000
+05
+#50000
+b0 =
+b10 &
+b10 D
+b10 U
+b10 Y
+b1111 !
+b1111 9
+b1111 @
+b1111 M
+b1111 V
+15
+b1111 4
+17
+#60000
+05
+#70000
+b11 &
+b11 D
+b11 U
+b11 Y
+15
+b1 /
+b1 ?
+#80000
 b1111 G
-11
+05
+#90000
+b100 &
+b100 D
+b100 U
+b100 Y
+b111 !
+b111 9
+b111 @
+b111 M
+b111 V
+15
+b111 4
+#100000
+b111 G
+05
+#110000
+b101 &
+b101 D
+b101 U
+b101 Y
+15
+b10 /
+b10 ?
+#120000
+b11100000111 G
+05
+#130000
+b110 &
+b110 D
+b110 U
+b110 Y
+bz !
+bz 9
+bz @
+bz M
+bz V
+15
+07
+#140000
+bz00000111 G
+05
+#150000
+bz00000111 #
+bz00000111 C
+1A
+1E
+1J
+bz I
+bz00000111 F
+b111 &
+b111 D
+b111 U
+b111 Y
+15
+b11 /
+b11 ?
 #160000
-01
+05
 #170000
-b10000 G
-11
+b1000 &
+b1000 D
+b1000 U
+b1000 Y
+15
 #180000
-01
+05
+#190000
+b1001 &
+b1001 D
+b1001 U
+b1001 Y
+15
+#200000
+05
+#210000
+b1010 &
+b1010 D
+b1010 U
+b1010 Y
+15
+#220000
+05
+#230000
+b1011 &
+b1011 D
+b1011 U
+b1011 Y
+15
