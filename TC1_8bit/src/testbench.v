@@ -10,26 +10,26 @@ module testbench;
     wire [15:0] PC;
     wire PC_inc;
 
-    reg [3:0] ALU_Ctrl;
-    reg [3:0] JMP_ctrl;
-    reg [3:0] MMU_Ctrl;
+    wire [3:0] ALU_Ctrl;
+    wire [3:0] JMP_Ctrl;
+    wire [3:0] MMU_Ctrl;
 
     wire [7:0] data_ext;
     wire [15:0] addr_ext;
     wire rW;
 
-    reg A_E;
-    reg B_E;
-    reg A_L;
-    reg B_L;
-    reg PCH_L;
-    reg PCH_E;
-    reg PCL_L;
-    reg PCL_E;
+    wire A_E;
+    wire B_E;
+    wire A_L;
+    wire B_L;
+    wire PCH_L;
+    wire PCH_E;
+    wire PCL_L;
+    wire PCL_E;
     
     wire PC_Dir_L;
 
-    reg [7:0] rom [0:16];
+    reg [7:0] rom [0:15];
 
     ALU ALU (
         .clk(clk),
@@ -66,7 +66,7 @@ module testbench;
         .bus(bus),
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
-        .JMP_ctrl(JMP_ctrl),
+        .JMP_Ctrl(JMP_Ctrl),
         .A_Dir(A_Dir)
     );
 
@@ -81,7 +81,25 @@ module testbench;
         .PC(PC)
     );
 
-    assign data_ext = (!rW) ? rom[addr_ext] : 8'bZ;
+    CU CU (
+        .clk(clk),
+        .rst_n(rst_n),
+        .bus(bus),
+        .PC_inc(PC_inc),
+        .ALU_Ctrl(ALU_Ctrl),
+        .JMP_Ctrl(JMP_Ctrl),
+        .MMU_Ctrl(MMU_Ctrl),
+        .A_E(A_E),
+        .A_L(A_L),
+        .B_E(B_E),
+        .B_L(B_L),
+        .PCH_E(PCH_E),
+        .PCH_L(PCH_L),
+        .PCL_E(PCL_E),
+        .PCL_L(PCL_L)
+    );
+
+    assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;
 
     always begin
         #10 clk = ~clk; 
@@ -93,21 +111,12 @@ module testbench;
 
         clk = 0;
         rst_n = 0;
-
-        A_E = 0;
-        A_L = 0;
-        B_E = 0;
-        B_L = 0;
-        PCH_L = 0;
-        PCH_E = 0;
-        PCL_E = 0;
-        PCL_L = 0;
         
         $dumpfile("testbench_waveform.vcd");
         $dumpvars(0, testbench);
 
         #30 rst_n = 1;
-        #320;
+        #1000;
 
         $finish;
     end

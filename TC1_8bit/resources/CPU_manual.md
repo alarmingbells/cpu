@@ -1,14 +1,14 @@
 Two phase clock system; all internal bus writes are done on positive clock edge, all reads are done on the negative edge.
 
 Instruction format
-    Bit 0: Operation type
-    Bit 1: Operation type
-    Bit 2: Address mode (Memory access)
-    Bit 3: Address mode
-    Bit 4: Sub-op
-    Bit 5: Sub-op
-    Bit 6: Sub-op
-    Bit 7: Sub-op
+    Bit 7: Operation type
+    Bit 6: Operation type
+    Bit 5: Address mode (Memory access)
+    Bit 4: Address mode
+    Bit 3: Sub-op
+    Bit 2: Sub-op
+    Bit 1: Sub-op
+    Bit 0: Sub-op
 
 Operation types:
     00: alu

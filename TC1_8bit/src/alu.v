@@ -58,7 +58,7 @@ module PCmover (
 
         input [7:0] bus,
         inout [15:0] PC_Dir,
-        input [3:0] JMP_ctrl,
+        input [3:0] JMP_Ctrl,
         input [7:0] A_Dir,
 
         output PC_Dir_L
@@ -75,8 +75,8 @@ module PCmover (
 
     always @(negedge clk) begin
         if (rst_n) begin
-            if (JMP_ctrl != 4'b0000) begin
-                case (JMP_ctrl)
+            if (JMP_Ctrl != 4'b0000) begin
+                case (JMP_Ctrl)
                     4'b0001 : address[7:0] <= bus; //load low byte of addr
                     4'b0010 : address[15:8] <= bus; //load high byte of addr
                     4'b0011 : PC_upd = address; //jump unconditionally
