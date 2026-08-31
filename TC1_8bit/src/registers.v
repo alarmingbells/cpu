@@ -18,7 +18,8 @@ module registers (
         input PC_inc,
 
         output [7:0] A_Dir,
-        input [7:0] B_Dir,
+        input [7:0] B_Dir_ALU,
+        output [7:0] B_Dir_JMP,
         input [15:0] PC_Dir,
         output [15:0] PC_Dir_out
     );
@@ -38,13 +39,14 @@ module registers (
                  (PCH_E) ? PC[15:8] : 8'bZ;
 
     assign A_Dir = A;
+    assign B_Dir_JMP = B;
 
     assign PC_Dir_out = PC;
 
     always @(negedge clk) begin
         if (rst_n) begin
             A <= (A_L_ready) ? bus : A;
-            B <= (B_L_ready) ? bus : (B_L_ALU_ready) ? B_Dir : B;
+            B <= (B_L_ready) ? bus : (B_L_ALU_ready) ? B_Dir_ALU : B;
             PC[7:0] <= (PCL_L) ? bus : PC[7:0];
             PC[15:8] <= (PCH_L) ? bus : PC[15:8];
             PC <= (PC_Dir_L) ? PC_Dir : PC;

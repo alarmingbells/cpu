@@ -5,7 +5,8 @@ module testbench;
     reg rst_n;
     wire [7:0] bus;
     wire [7:0] A_Dir;
-    wire [7:0] B_Dir;
+    wire [7:0] B_Dir_ALU;
+    wire [7:0] B_Dir_JMP;
     wire [15:0] PC_Dir;
     wire [15:0] PC;
     wire PC_inc;
@@ -37,7 +38,7 @@ module testbench;
         .rst_n(rst_n),
         .bus(bus),
         .A_Dir(A_Dir),
-        .B_Dir(B_Dir),
+        .B_Dir_ALU(B_Dir_ALU),
         .B_L_ALU(B_L_ALU),
         .ALU_Ctrl(ALU_Ctrl)
     );
@@ -57,7 +58,8 @@ module testbench;
         .PCL_L(PCL_L),
         .PC_inc(PC_inc),
         .A_Dir(A_Dir),
-        .B_Dir(B_Dir),
+        .B_Dir_ALU(B_Dir_ALU),
+        .B_Dir_JMP(B_Dir_JMP),
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
         .PC_Dir_out(PC)
@@ -70,7 +72,7 @@ module testbench;
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
         .JMP_Ctrl(JMP_Ctrl),
-        .A_Dir(A_Dir)
+        .B_Dir_JMP(B_Dir_JMP)
     );
 
     MMU MMU (
@@ -479,7 +481,7 @@ module PCmover (
         input [7:0] bus,
         inout [15:0] PC_Dir,
         input [3:0] JMP_Ctrl,
-        input [7:0] A_Dir,
+        input [7:0] B_Dir_JMP,
 
         output PC_Dir_L
     );
@@ -500,8 +502,8 @@ module PCmover (
                     4'b0001 : address[7:0] <= bus; //load low byte of addr
                     4'b0010 : address[15:8] <= bus; //load high byte of addr
                     4'b0011 : PC_upd = address; //jump unconditionally
-                    4'b0100 : begin //jump if A != 0
-                        if (A_Dir != 7'd0) begin
+                    4'b0100 : begin //jump if B != 0
+                        if (B_Dir_JMP != 7'd0) begin
                             PC_upd = address;
                             active = 1;
                         end
@@ -541,7 +543,8 @@ module registers (
         input PC_inc,
 
         output [7:0] A_Dir,
-        input [7:0] B_Dir,
+        input [7:0] B_Dir_ALU,
+        output [7:0] B_Dir_JMP,
         input [15:0] PC_Dir,
         output [15:0] PC_Dir_out
     );
@@ -561,13 +564,14 @@ module registers (
                  (PCH_E) ? PC[15:8] : 8'bZ;
 
     assign A_Dir = A;
+    assign B_Dir_JMP = B;
 
     assign PC_Dir_out = PC;
 
     always @(negedge clk) begin
         if (rst_n) begin
             A <= (A_L_ready) ? bus : A;
-            B <= (B_L_ready) ? bus : (B_L_ALU_ready) ? B_Dir : B;
+            B <= (B_L_ready) ? bus : (B_L_ALU_ready) ? B_Dir_ALU : B;
             PC[7:0] <= (PCL_L) ? bus : PC[7:0];
             PC[15:8] <= (PCH_L) ? bus : PC[15:8];
             PC <= (PC_Dir_L) ? PC_Dir : PC;
