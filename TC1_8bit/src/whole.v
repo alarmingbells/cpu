@@ -1,5 +1,3 @@
-//whole source for visualisation
-
 `timescale 1ns / 1ps
 
 module testbench;
@@ -12,26 +10,27 @@ module testbench;
     wire [15:0] PC;
     wire PC_inc;
 
-    reg [3:0] ALU_Ctrl;
-    reg [3:0] JMP_ctrl;
-    reg [3:0] MMU_Ctrl;
+    wire [3:0] ALU_Ctrl;
+    wire [3:0] JMP_Ctrl;
+    wire [3:0] MMU_Ctrl;
 
     wire [7:0] data_ext;
     wire [15:0] addr_ext;
     wire rW;
 
-    reg A_E;
-    reg B_E;
-    reg A_L;
-    reg B_L;
-    reg PCH_L;
-    reg PCH_E;
-    reg PCL_L;
-    reg PCL_E;
+    wire A_E;
+    wire B_E;
+    wire A_L;
+    wire B_L;
+    wire B_L_ALU;
+    wire PCH_L;
+    wire PCH_E;
+    wire PCL_L;
+    wire PCL_E;
     
     wire PC_Dir_L;
 
-    reg [7:0] rom [0:16];
+    reg [7:0] rom [0:15];
 
     ALU ALU (
         .clk(clk),
@@ -39,6 +38,7 @@ module testbench;
         .bus(bus),
         .A_Dir(A_Dir),
         .B_Dir(B_Dir),
+        .B_L_ALU(B_L_ALU),
         .ALU_Ctrl(ALU_Ctrl)
     );
 
@@ -50,6 +50,7 @@ module testbench;
         .B_E(B_E),
         .A_L(A_L),
         .B_L(B_L),
+        .B_L_ALU(B_L_ALU),
         .PCH_E(PCH_E),
         .PCH_L(PCH_L),
         .PCL_E(PCL_E),
@@ -68,7 +69,7 @@ module testbench;
         .bus(bus),
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
-        .JMP_ctrl(JMP_ctrl),
+        .JMP_Ctrl(JMP_Ctrl),
         .A_Dir(A_Dir)
     );
 
@@ -83,7 +84,25 @@ module testbench;
         .PC(PC)
     );
 
-    assign data_ext = (!rW) ? rom[addr_ext] : 8'bZ;
+    CU CU (
+        .clk(clk),
+        .rst_n(rst_n),
+        .bus(bus),
+        .PC_inc(PC_inc),
+        .ALU_Ctrl(ALU_Ctrl),
+        .JMP_Ctrl(JMP_Ctrl),
+        .MMU_Ctrl(MMU_Ctrl),
+        .A_E(A_E),
+        .A_L(A_L),
+        .B_E(B_E),
+        .B_L(B_L),
+        .PCH_E(PCH_E),
+        .PCH_L(PCH_L),
+        .PCL_E(PCL_E),
+        .PCL_L(PCL_L)
+    );
+
+    assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;
 
     always begin
         #10 clk = ~clk; 
@@ -95,26 +114,19 @@ module testbench;
 
         clk = 0;
         rst_n = 0;
-
-        A_E = 0;
-        A_L = 0;
-        B_E = 0;
-        B_L = 0;
-        PCH_L = 0;
-        PCH_E = 0;
-        PCL_E = 0;
-        PCL_L = 0;
         
         $dumpfile("testbench_waveform.vcd");
         $dumpvars(0, testbench);
 
         #30 rst_n = 1;
-        #320;
+        #1000;
 
         $finish;
     end
 
 endmodule
+
+//cu.v
 
 module CU (
         input clk,
@@ -142,6 +154,7 @@ module CU (
     //1 - operand load
     //2 - execution
     reg [1:0] status;
+    reg halt;
     reg waiting;
     reg operand;
 
@@ -161,7 +174,8 @@ module CU (
         B_E = 0;
         B_L = 0;
         A_L = 0;
-        if (rst_n) begin
+
+        if (rst_n & !halt) begin
             case (status)
                 0 : begin
                     if (!waiting) begin //opcode load
@@ -169,9 +183,10 @@ module CU (
                         MMU_Ctrl <= 4'b0101;
                         waiting <= 1;
                     end else begin //store opcode in instruction register
+                        PC_inc <= 0;
                         instruction <= bus;
                         waiting <= 0;
-                        if (bus[2]) begin
+                        if (bus[5]) begin
                             status <= 2'd1;
                         end else status <= 2'd2;
                     end
@@ -184,7 +199,7 @@ module CU (
                             waiting <= 1;
                         end else begin //store operand in MMU//JMP address low
                             PC_inc <= 0;
-                            if (instruction[1]) begin
+                            if (instruction[7]) begin
                                 JMP_Ctrl <= 4'b0001;
                             end else begin
                                 MMU_Ctrl <= 4'b0001;
@@ -199,39 +214,41 @@ module CU (
                             waiting <= 1;
                         end else begin //store operand in MMU/JMP address high
                             PC_inc <= 0;
-                            if (instruction[1]) begin
+                            if (instruction[7]) begin
                                 JMP_Ctrl <= 4'b0010;
                             end else begin
                                 MMU_Ctrl <= 4'b0010;
                             end
+                            operand <= 0;
                             waiting <= 0;
-                            status <= 2;
+                            status <= 2'd2;
                         end
                     end
                 end
                 2 : begin
                     PC_inc <= 0;
-                    case (instruction[1:0])
+                    if (instruction == 8'd0) halt <= 1; //halt
+                    case (instruction[7:6])
                         2'b00 : begin //ALU operation
-                            if (instruction[2]) begin //memory address
+                            if (instruction[5]) begin //memory address
                                 MMU_Ctrl <= 4'b0011;
                             end else begin
-                                if (!instruction[3]) begin //b register
+                                if (!instruction[4]) begin //b register
                                     B_E <= 1;
                                 end else begin //PC low
                                     PCL_E <= 1;
                                 end
                             end
-                            ALU_Ctrl <= instruction[7:4];
+                            ALU_Ctrl <= instruction[3:0];
                         end
                         2'b01 : begin //register transfer
-                            case (instruction[7:4])
+                            case (instruction[3:0])
                                 4'b0001 : begin // A to target
                                     A_E <= 1;
-                                    if (instruction[2]) begin //memory address
+                                    if (instruction[5]) begin //memory address
                                         MMU_Ctrl <= 4'b0100;
                                     end else begin
-                                        if (!instruction[3]) begin // b register
+                                        if (!instruction[4]) begin //b register
                                             B_L <= 1;
                                         end else begin //PC low
                                             PCL_L <= 1;
@@ -240,10 +257,10 @@ module CU (
                                 end
                                 4'b0010 : begin // target to A
                                     A_L <= 1;
-                                    if (instruction[2]) begin //memory address
+                                    if (instruction[5]) begin //memory address
                                         MMU_Ctrl <= 4'b0011;
                                     end else begin
-                                        if (!instruction[3]) begin // b register
+                                        if (!instruction[4]) begin //b register
                                             B_E <= 1;
                                         end else begin //PC low
                                             PCL_E <= 1;
@@ -252,10 +269,10 @@ module CU (
                                 end
                                 4'b0011 : begin // B to target
                                     B_E <= 1;
-                                    if (instruction[2]) begin //memory address
+                                    if (instruction[5]) begin //memory address
                                         MMU_Ctrl <= 4'b0100;
                                     end else begin
-                                        if (!instruction[3]) begin // b register
+                                        if (!instruction[4]) begin //a register
                                             A_L <= 1;
                                         end else begin //PC low
                                             PCL_L <= 1;
@@ -264,10 +281,10 @@ module CU (
                                 end
                                 4'b0100 : begin // target to B
                                     B_L <= 1;
-                                    if (instruction[2]) begin //memory address
+                                    if (instruction[5]) begin //memory address
                                         MMU_Ctrl <= 4'b0011;
                                     end else begin
-                                        if (!instruction[3]) begin // b register
+                                        if (!instruction[4]) begin //a register
                                             A_E <= 1;
                                         end else begin //PC low
                                             PCL_E <= 1;
@@ -277,9 +294,10 @@ module CU (
                             endcase
                         end
                         2'b10 : begin //jump
-                            JMP_Ctrl <= instruction[7:4];
+                            JMP_Ctrl <= instruction[3:0];
                         end
                     endcase
+                    status <= 2'd0;
                 end
             endcase
         end
@@ -287,6 +305,7 @@ module CU (
 
     always @(posedge rst_n) begin
         status <= 2'd0;
+        halt <= 0;
         waiting <= 0;
         operand <= 0;
 
@@ -313,70 +332,93 @@ module CU (
 
 endmodule
 
-module registers (
+//mmu.v
+
+module MMU (
         input clk,
-        input rst_n, 
+        input rst_n,
 
         inout [7:0] bus,
 
-        input A_E,
-        input B_E,
-        input PCH_E,
-        input PCL_E,
-        input A_L,
-        input B_L,
-        input PCH_L,
-        input PCL_L,
-        input PC_Dir_L,
+        input [3:0] MMU_Ctrl,
 
-        input PC_inc,
+        inout [7:0] data_out,
+        output [15:0] addr_out,
+        output rW,
 
-        output [7:0] A_Dir,
-        output [7:0] B_Dir,
-        input [15:0] PC_Dir,
-        output [15:0] PC_Dir_out
+        input [15:0] PC
     );
 
-    reg [7:0] A;
-    reg [7:0] B;
+    reg bus_enable;
 
-    reg [15:0] PC;
+    reg read;
+    reg write;
 
-    assign bus = (A_E) ? A : 
-                 (B_E) ? B :
-                 (PCL_E) ? PC[7:0] :
-                 (PCH_E) ? PC[15:8] : 8'bZ;
+    reg [7:0] data_external;
+    reg [15:0] addr_external;
 
-    assign A_Dir = A;
-    assign B_Dir = B; 
+    reg [15:0] address;
 
-    assign PC_Dir_out = PC;
+    assign bus = (bus_enable) ? data_out : 8'bZ;
 
-    always @(negedge clk) begin
-        if (rst_n) begin
-            A <= (A_L) ? bus : A;
-            B <= (B_L) ? bus : B;
-            PC[7:0] <= (PCL_L) ? bus : PC[7:0];
-            PC[15:8] <= (PCH_L) ? bus : PC[15:8];
-            PC <= (PC_Dir_L) ? PC_Dir : PC;
-        end
-    end
+    assign data_out = (write) ? data_external : 8'bZ;
+    assign addr_out = (read || write) ? addr_external : 16'bZ;
+    assign rW = read ? 1'b1 : (write ? 1'b0 : 1'bZ);
 
     always @(posedge clk) begin
         if (rst_n) begin
-            if (PC_inc)
-                PC <= PC + 1;
-        end else begin
-            PC <= 16'd0;
-        end
+            if (MMU_Ctrl != 4'b0000) begin
+                case (MMU_Ctrl)
+                    4'b0001 : address[7:0] <= bus; //load low byte of addr
+                    4'b0010 : address[15:8] <= bus; //load high byte of addr
+                    4'b0011 : begin //load memory at address buffer onto system bus
+                        addr_external <= address; 
+                        read <= 1;
+                        bus_enable <= 1;
+                    end
+                    4'b0101 : begin //load memory at program counter onto system bus
+                        addr_external <= PC;
+                        read <= 1;
+                        bus_enable <= 1;
+                    end
+                endcase
+            end else begin
+                bus_enable <= 0;
+                read <= 0;
+            end
+        end else bus_enable <= 0;
+    end
+
+    always @(negedge clk) begin
+        if (rst_n) begin
+            if (MMU_Ctrl != 4'b0000) begin
+                case (MMU_Ctrl)
+                    4'b0100 : begin //load system bus into memory at address buffer
+                        addr_external <= address;
+                        data_external <= bus;
+                        write <= 1;
+                    end
+                endcase
+            end else begin
+                write <= 0;
+            end
+        end else bus_enable <= 0;
     end
 
     always @(posedge rst_n) begin
-        A <= 8'b0;
-        B <= 8'b0;
-        PC <= 16'b0;
+        bus_enable <= 0;
+        read <= 0;
+        write <= 0;
+
+        data_external <= 16'd0;
+        addr_external <= 16'd0;
+
+        address <= 16'd0;
     end
+
 endmodule
+
+//alu.v
 
 module ALU (
         input clk,
@@ -387,16 +429,14 @@ module ALU (
         input [3:0] ALU_Ctrl,
 
         input [7:0] A_Dir,
-        input [7:0] B_Dir
+        output [7:0] B_Dir,
+        output reg B_L_ALU
     );
 
     reg [7:0] sum;
     reg [7:0] out;
-    reg bus_enable;
 
-    assign bus = (bus_enable) ? out : 8'bZ;
-
-    always @(posedge clk) out <= sum;
+    assign B_Dir = (B_L_ALU) ? sum : 8'bZ;
 
     always @(negedge clk) begin
         if (rst_n) begin
@@ -418,15 +458,15 @@ module ALU (
                     4'b1100 : sum = (A_Dir >= bus);
                     4'b1101 : sum = (A_Dir <= bus);
                 endcase
-                bus_enable = 1; 
-            end else bus_enable = 0;
-        end else bus_enable = 0;
+                B_L_ALU = 1; 
+            end else B_L_ALU = 0;
+        end else B_L_ALU = 0;
     end;
 
     always @(posedge rst_n) begin
         sum <= 8'd0;
         out <= 8'd0;
-        bus_enable <= 0;
+        B_L_ALU <= 0;
     end 
 
 
@@ -438,7 +478,7 @@ module PCmover (
 
         input [7:0] bus,
         inout [15:0] PC_Dir,
-        input [3:0] JMP_ctrl,
+        input [3:0] JMP_Ctrl,
         input [7:0] A_Dir,
 
         output PC_Dir_L
@@ -455,8 +495,8 @@ module PCmover (
 
     always @(negedge clk) begin
         if (rst_n) begin
-            if (JMP_ctrl != 4'b0000) begin
-                case (JMP_ctrl)
+            if (JMP_Ctrl != 4'b0000) begin
+                case (JMP_Ctrl)
                     4'b0001 : address[7:0] <= bus; //load low byte of addr
                     4'b0010 : address[15:8] <= bus; //load high byte of addr
                     4'b0011 : PC_upd = address; //jump unconditionally
@@ -479,93 +519,80 @@ module PCmover (
 
 endmodule
 
-module MMU (
+//registers.v
+
+module registers (
         input clk,
-        input rst_n,
+        input rst_n, 
 
         inout [7:0] bus,
 
-        input [3:0] MMU_Ctrl,
+        input A_E,
+        input B_E,
+        input PCH_E,
+        input PCL_E,
+        input A_L,
+        input B_L,
+        input B_L_ALU,
+        input PCH_L,
+        input PCL_L,
+        input PC_Dir_L,
 
-        inout [7:0] data_out,
-        output [15:0] addr_out,
-        output rW,
+        input PC_inc,
 
-        input [15:0] PC
+        output [7:0] A_Dir,
+        input [7:0] B_Dir,
+        input [15:0] PC_Dir,
+        output [15:0] PC_Dir_out
     );
 
-    reg bus_enable;
+    reg [7:0] A;
+    reg [7:0] B;
 
-    reg read;
-    reg write;
+    reg [15:0] PC;
 
-    reg [7:0] out;
+    reg A_L_ready;
+    reg B_L_ready;
+    reg B_L_ALU_ready;
 
-    reg [7:0] data_external;
-    reg [15:0] addr_external;
+    assign bus = (A_E) ? A : 
+                 (B_E) ? B :
+                 (PCL_E) ? PC[7:0] :
+                 (PCH_E) ? PC[15:8] : 8'bZ;
 
-    reg [15:0] address;
+    assign A_Dir = A;
 
-    assign bus = (bus_enable) ? out : 8'bZ;
-
-    assign data_out = (write) ? data_external : 8'bZ;
-    assign addr_out = (read || write) ? addr_external : 16'bZ;
-    assign rW = read ? 1'b1 : (write ? 1'b0 : 1'bZ);
-
-    always @(posedge clk) begin
-        if (rst_n) begin
-            if (MMU_Ctrl != 4'b0000) begin
-                case (MMU_Ctrl)
-                    4'b0011 : begin //load memory at address buffer onto system bus
-                        addr_external <= address; 
-                        out <= data_out;
-                        read <= 1;
-                        bus_enable <= 1;
-                    end
-                    4'b0101 : begin //load memory at program counter onto system bus
-                        addr_external <= PC;
-                        out <= data_out;
-                        read <= 1;
-                        bus_enable <= 1;
-                    end
-                endcase
-            end else begin
-                bus_enable <= 0;
-                read <= 0;
-            end
-        end else bus_enable <= 0;
-    end
+    assign PC_Dir_out = PC;
 
     always @(negedge clk) begin
         if (rst_n) begin
-            if (MMU_Ctrl != 4'b0000) begin
-                case (MMU_Ctrl)
-                    4'b0001 : address[7:0] <= bus; //load low byte of addr
-                    4'b0010 : address[15:8] <= bus; //load high byte of addr
-                    4'b0100 : begin //load system bus into memory at address buffer
-                        addr_external <= address;
-                        data_external <= bus;
-                        write <= 1;
-                    end
-                endcase
-            end else begin
-                bus_enable <= 0;
-                write <= 0;
-            end
-        end else bus_enable <= 0;
+            A <= (A_L_ready) ? bus : A;
+            B <= (B_L_ready) ? bus : (B_L_ALU_ready) ? B_Dir : B;
+            PC[7:0] <= (PCL_L) ? bus : PC[7:0];
+            PC[15:8] <= (PCH_L) ? bus : PC[15:8];
+            PC <= (PC_Dir_L) ? PC_Dir : PC;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (rst_n) begin
+            A_L_ready <= A_L;
+            B_L_ready <= B_L;
+            B_L_ALU_ready <= B_L_ALU;
+            if (PC_inc)
+                PC <= PC + 1;
+        end else begin
+            PC <= 16'd0;
+        end
     end
 
     always @(posedge rst_n) begin
-        bus_enable <= 0;
-        read <= 0;
-        write <= 0;
+        A <= 8'b0;
+        B <= 8'b0;
+        PC <= 16'b0;
 
-        out <= 8'd0;
-
-        data_external <= 16'd0;
-        addr_external <= 16'd0;
-
-        address <= 16'd0;
+        A_L_ready <= 0;
+        B_L_ready <= 0;
+        B_L_ALU_ready <= 0;
     end
-
 endmodule

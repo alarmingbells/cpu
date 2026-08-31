@@ -22,6 +22,7 @@ module testbench;
     wire B_E;
     wire A_L;
     wire B_L;
+    wire B_L_ALU;
     wire PCH_L;
     wire PCH_E;
     wire PCL_L;
@@ -37,6 +38,7 @@ module testbench;
         .bus(bus),
         .A_Dir(A_Dir),
         .B_Dir(B_Dir),
+        .B_L_ALU(B_L_ALU),
         .ALU_Ctrl(ALU_Ctrl)
     );
 
@@ -48,6 +50,7 @@ module testbench;
         .B_E(B_E),
         .A_L(A_L),
         .B_L(B_L),
+        .B_L_ALU(B_L_ALU),
         .PCH_E(PCH_E),
         .PCH_L(PCH_L),
         .PCL_E(PCL_E),

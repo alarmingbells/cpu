@@ -7,16 +7,14 @@ module ALU (
         input [3:0] ALU_Ctrl,
 
         input [7:0] A_Dir,
-        input [7:0] B_Dir
+        output [7:0] B_Dir,
+        output reg B_L_ALU
     );
 
     reg [7:0] sum;
     reg [7:0] out;
-    reg bus_enable;
 
-    assign bus = (bus_enable) ? out : 8'bZ;
-
-    always @(posedge clk) out <= sum;
+    assign B_Dir = (B_L_ALU) ? sum : 8'bZ;
 
     always @(negedge clk) begin
         if (rst_n) begin
@@ -38,15 +36,15 @@ module ALU (
                     4'b1100 : sum = (A_Dir >= bus);
                     4'b1101 : sum = (A_Dir <= bus);
                 endcase
-                bus_enable = 1; 
-            end else bus_enable = 0;
-        end else bus_enable = 0;
+                B_L_ALU = 1; 
+            end else B_L_ALU = 0;
+        end else B_L_ALU = 0;
     end;
 
     always @(posedge rst_n) begin
         sum <= 8'd0;
         out <= 8'd0;
-        bus_enable <= 0;
+        B_L_ALU <= 0;
     end 
 
 
