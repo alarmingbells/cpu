@@ -112,13 +112,13 @@ module testbench;
     end
 
     initial begin
-        $readmemh("test_rom.txt", rom);
+        //$readmemh("test_rom.txt", rom);
 
         clk = 0;
         rst_n = 0;
         
-        $dumpfile("testbench_waveform.vcd");
-        $dumpvars(0, testbench);
+        //$dumpfile("testbench_waveform.vcd");
+        //$dumpvars(0, testbench);
 
         #30 rst_n = 1;
         #1000;
@@ -431,14 +431,14 @@ module ALU (
         input [3:0] ALU_Ctrl,
 
         input [7:0] A_Dir,
-        output [7:0] B_Dir,
+        output [7:0] B_Dir_ALU,
         output reg B_L_ALU
     );
 
     reg [7:0] sum;
     reg [7:0] out;
 
-    assign B_Dir = (B_L_ALU) ? sum : 8'bZ;
+    assign B_Dir_ALU = (B_L_ALU) ? sum : 8'bZ;
 
     always @(negedge clk) begin
         if (rst_n) begin

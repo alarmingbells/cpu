@@ -26,6 +26,7 @@ module CU (
     reg [1:0] status;
     reg halt;
     reg waiting;
+    reg write_waiting;
     reg operand;
 
     reg [7:0] instruction;
@@ -49,9 +50,11 @@ module CU (
             case (status)
                 0 : begin
                     if (!waiting) begin //opcode load
-                        PC_inc <= 1;
-                        MMU_Ctrl <= 4'b0101;
-                        waiting <= 1;
+                        if (!write_waiting) begin
+                            PC_inc <= 1;
+                            MMU_Ctrl <= 4'b0101;
+                            waiting <= 1;
+                        end else write_waiting <= 0;
                     end else begin //store opcode in instruction register
                         PC_inc <= 0;
                         instruction <= bus;
@@ -116,6 +119,7 @@ module CU (
                                 4'b0001 : begin // A to target
                                     A_E <= 1;
                                     if (instruction[5]) begin //memory address
+                                        write_waiting <= 1;
                                         MMU_Ctrl <= 4'b0100;
                                     end else begin
                                         if (!instruction[4]) begin //b register
@@ -140,6 +144,7 @@ module CU (
                                 4'b0011 : begin // B to target
                                     B_E <= 1;
                                     if (instruction[5]) begin //memory address
+                                        write_waiting <= 1;
                                         MMU_Ctrl <= 4'b0100;
                                     end else begin
                                         if (!instruction[4]) begin //a register
@@ -177,6 +182,7 @@ module CU (
         status <= 2'd0;
         halt <= 0;
         waiting <= 0;
+        write_waiting <= 0;
         operand <= 0;
 
         instruction <= 8'd0;

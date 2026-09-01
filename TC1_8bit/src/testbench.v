@@ -123,6 +123,8 @@ module testbench;
         #30 rst_n = 1;
         #1000;
 
+        $display("Result at $000D: %d", rom[16'h000D]);
+
         $finish;
     end
 

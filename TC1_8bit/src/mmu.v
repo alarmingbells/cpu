@@ -18,6 +18,8 @@ module MMU (
     reg read;
     reg write;
 
+    reg write_L;
+
     reg [7:0] data_external;
     reg [15:0] addr_external;
 
@@ -45,24 +47,32 @@ module MMU (
                         read <= 1;
                         bus_enable <= 1;
                     end
+                    4'b0100 : begin 
+                        bus_enable <= 0;
+                        read <= 0;
+                        write_L <= 1;
+                    end
+                    default : begin 
+                        bus_enable <= 0;
+                        read <= 0;
+                        write_L <= 0;
+                    end
                 endcase
             end else begin
                 bus_enable <= 0;
                 read <= 0;
+                write_L <= 0;
             end
         end else bus_enable <= 0;
     end
 
     always @(negedge clk) begin
         if (rst_n) begin
-            if (MMU_Ctrl != 4'b0000) begin
-                case (MMU_Ctrl)
-                    4'b0100 : begin //load system bus into memory at address buffer
-                        addr_external <= address;
-                        data_external <= bus;
-                        write <= 1;
-                    end
-                endcase
+            if (write_L) begin //load system bus into memory at address buffer
+                addr_external <= address;
+                data_external <= bus;
+                bus_enable <= 0;
+                write <= 1;
             end else begin
                 write <= 0;
             end
