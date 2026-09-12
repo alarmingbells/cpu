@@ -1,0 +1,9 @@
+PLAN FOR TC2:
+-clean up address modes
+	-remove PC addressing, it's useless
+	-replace with separate sum register, keep A and B general purpose
+	-sum register also used for conditional jumps
+-add stack
+	-PUSH/POP operations
+-subroutines
+	-return address pushed to stack 

@@ -1,9 +1,11 @@
+TC2:
+
 Two phase clock system; all internal bus writes are done on positive clock edge, all reads are done on the negative edge.
 
 Instruction format
     Bit 7: Operation type
     Bit 6: Operation type
-    Bit 5: Address mode (Memory access)
+    Bit 5: Address mode
     Bit 4: Address mode
     Bit 3: Sub-op
     Bit 2: Sub-op
@@ -14,13 +16,13 @@ Operation types:
     00: alu
     01: register transfer
     10: jump
-    11:
+    11: stack operation
 
 Address modes (targets):
     00: b register
-    01: pc low
+    01: sum register
     10: memory address
-    11: indirect memory address
+    11: immediate operand
 
 MMU sub-ops:
     0001: address buffer low byte load
