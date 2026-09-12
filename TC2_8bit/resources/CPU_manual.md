@@ -13,28 +13,26 @@ Instruction format
     Bit 0: Sub-op
 
 Operation types:
-    00: alu
-    01: register transfer
-    10: jump
-    11: stack operation
+    00: ALU
+    01: Registers transfer
+    10: Jump
+    11: Stack
 
 Address modes (targets):
-    00: b register
-    01: sum register
-    10: memory address
-    11: immediate operand
+    00: B register (A register when operation is B register primary)
+    01: Sum register (Load operations only, illegal to write to S)
+    10: Memory
+    11: Immediate operand
 
 MMU sub-ops:
-    0001: address buffer low byte load
-    0010: address buffer high byte load
-    0011: memory at address buffer to system bus (standard read)
-    0100: system bus to memory at address buffer (standard write)
-    0101: memory at PC to {system bus/direct to CU} (op-read)
+    0001: Address buffer low byte load
+    0010: Address buffer high byte load
+    0011: Memory at address buffer to system bus (standard read)
+    0100: System bus to memory at address buffer (standard write)
+    0101: Memory at PC to {system bus/direct to CU} (op-read)
 
 Register sub-ops:
     0001: A to target
-    0010: target to A
+    0010: Target to A
     0011: B to target
-    0100: target to B
-
-    Note: For B Register sub-ops, using address mode 00 is illegal
+    0100: Target to B

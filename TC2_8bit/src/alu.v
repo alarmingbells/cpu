@@ -7,14 +7,14 @@ module ALU (
         input [3:0] ALU_Ctrl,
 
         input [7:0] A_Dir,
-        output [7:0] B_Dir_ALU,
-        output reg B_L_ALU
+        output [7:0] S_Dir_ALU,
+        output reg S_L_ALU
     );
 
     reg [7:0] sum;
     reg [7:0] out;
 
-    assign B_Dir_ALU = (B_L_ALU) ? sum : 8'bZ;
+    assign S_Dir_ALU = (S_L_ALU) ? sum : 8'bZ;
 
     always @(negedge clk) begin
         if (rst_n) begin
@@ -36,15 +36,15 @@ module ALU (
                     4'b1100 : sum = (A_Dir >= bus);
                     4'b1101 : sum = (A_Dir <= bus);
                 endcase
-                B_L_ALU = 1; 
-            end else B_L_ALU = 0;
-        end else B_L_ALU = 0;
+                S_L_ALU = 1; 
+            end else S_L_ALU = 0;
+        end else S_L_ALU = 0;
     end;
 
     always @(posedge rst_n) begin
         sum <= 8'd0;
         out <= 8'd0;
-        B_L_ALU <= 0;
+        S_L_ALU <= 0;
     end 
 
 
@@ -57,7 +57,7 @@ module PCmover (
         input [7:0] bus,
         inout [15:0] PC_Dir,
         input [3:0] JMP_Ctrl,
-        input [7:0] B_Dir_JMP,
+        input [7:0] S_Dir_JMP,
 
         output PC_Dir_L
     );
@@ -79,7 +79,7 @@ module PCmover (
                     4'b0010 : address[15:8] <= bus; //load high byte of addr
                     4'b0011 : PC_upd = address; //jump unconditionally
                     4'b0100 : begin //jump if B != 0
-                        if (B_Dir_JMP != 7'd0) begin
+                        if (S_Dir_JMP != 7'd0) begin
                             PC_upd = address;
                             active = 1;
                         end

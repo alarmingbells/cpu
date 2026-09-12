@@ -1,5 +1,5 @@
 PLAN FOR TC2:
--clean up address modes
+-clean up address modes (done, not tested)
 	-remove PC addressing, it's useless
 	-replace with separate sum register, keep A and B general purpose
 	-sum register also used for conditional jumps
