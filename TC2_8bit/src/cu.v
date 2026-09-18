@@ -29,6 +29,8 @@ module CU (
 
     reg [7:0] instruction;
 
+    reg [7:0] SP;
+
     reg bus_enable;
     reg [7:0] out;
 
@@ -43,6 +45,7 @@ module CU (
 
         A_E = 0;
         B_E = 0;
+        S_E = 0;
         B_L = 0;
         A_L = 0;
 
@@ -52,7 +55,7 @@ module CU (
                     if (!waiting) begin //opcode load
                         if (!write_waiting) begin
                             PC_inc <= 1;
-                            MMU_Ctrl <= 4'b0101;
+                            MMU_Ctrl <= 4'0110;
                             waiting <= 1;
                         end else write_waiting <= 0;
                     end else begin //store opcode in instruction register
@@ -68,7 +71,7 @@ module CU (
                     if (!operand) begin //first operand
                         if (!waiting) begin //operand load
                             PC_inc <= 1;
-                            MMU_Ctrl = 4'b0101;
+                            MMU_Ctrl = 4'0110;
                             waiting <= 1;
                         end else begin //store operand in MMU//JMP address low for memory reads, store result in operand buffer for immediate loads
                             PC_inc <= 0;
@@ -87,9 +90,9 @@ module CU (
                     end else begin //second operand
                         if (!waiting) begin //operand load
                             PC_inc <= 1;
-                            MMU_Ctrl <= 4'b0101;
+                            MMU_Ctrl <= 4'0110;
                             waiting <= 1;
-                        end else begin //store operand in MMU/JMP address high
+                        end else begin //store operand in MMU//JMP address low for memory reads, store result in operand buffer for immediate loads
                             PC_inc <= 0;
                             if (instruction[7]) begin
                                 JMP_Ctrl <= 4'b0010;
@@ -122,80 +125,119 @@ module CU (
                             case (instruction[3:0])
                                 4'b0001 : begin // A to target
                                     A_E <= 1;
-                                    if (instruction[5]) begin
-                                        if (!instruction[4]) begin  //memory address
+                                    case (instruction[5:4])
+                                        2'b00 :  //B register
+                                            B_L <= 1;
+                                        2'b01 : begin //Indexed memory
+                                            write_waiting <= 1;
+                                            MMU_Ctrl <= 4'b0101;
+                                        end
+                                        2'b10 : begin //Memory
                                             write_waiting <= 1;
                                             MMU_Ctrl <= 4'b0100;
-                                        end else begin //immediate operand
-                                            //illegal (write to immediate)
-                                            halt <= 1;
                                         end
-                                    end else begin
-                                        if (!instruction[4]) begin //b register
-                                            B_L <= 1;
-                                        end else begin //sum resiger
-                                            //illegal (write to sum register)
-                                            halt <= 1;
-                                        end
-                                    end
+                                        2'b11 : halt <= 1; //Illegal (write to immediate)
+                                    endcase
                                 end
                                 4'b0010 : begin // target to A
                                     A_L <= 1;
-                                    if (instruction[5]) begin
-                                        if (!instruction[4]) begin //memory address
-                                            MMU_Ctrl <= 4'b0011;
-                                        end else begin //immediate operand
+                                    case (instruction[5:4])
+                                        2'b00 :  //B register
+                                            B_E <= 1;
+                                        2'b01 : begin //Indexed memory
+                                            MMU_Ctrl <= 4'b0111;
+                                        end
+                                        2'b10 : begin //Memory
+                                            MMU_Ctrl <= 4'b0101;
+                                        end
+                                        2'b11 : begin //Immediate operand
                                             out <= operand_buffer;
                                             bus_enable <= 1;
                                         end
-                                    end else begin
-                                        if (!instruction[4]) begin //b register
-                                            B_E <= 1;
-                                        end else begin //sum register
-                                            S_E <= 1;
-                                        end
-                                    end
+                                    endcase
                                 end
                                 4'b0011 : begin // B to target
                                     B_E <= 1;
-                                    if (instruction[5]) begin
-                                        if (!instruction[4]) begin //memory address
+                                    case (instruction[5:4])
+                                        2'b00 :  //Illegal (B to B)
+                                            halt <= 1;
+                                        2'b01 : begin //Indexed memory
+                                            write_waiting <= 1;
+                                            MMU_Ctrl <= 4'b0101;
+                                        end
+                                        2'b10 : begin //Memory
                                             write_waiting <= 1;
                                             MMU_Ctrl <= 4'b0100;
-                                        end else begin //immediate operand
-                                            //illegal (write to immediate)
-                                            halt <= 1;
                                         end
-                                    end else begin
-                                        if (!instruction[4]) begin //a register
-                                            A_L <= 1;
-                                        end else begin //sum register
-                                            //illegal (write to sum register)
-                                            halt <= 1;
-                                        end
-                                    end
+                                        2'b11 : halt <= 1; //Illegal (write to immediate)
+                                    endcase
                                 end
                                 4'b0100 : begin // target to B
                                     B_L <= 1;
-                                    if (instruction[5]) begin
-                                        if (!instruction[4]) begin //memory address
-                                            MMU_Ctrl <= 4'b0011;
-                                        end else begin //immediate operand
+                                    case (instruction[5:4])
+                                        2'b00 :  //Illegal (B to B)
+                                            halt <= 1;
+                                        2'b01 : begin //Indexed memory
+                                            MMU_Ctrl <= 4'b0111;
+                                        end
+                                        2'b10 : begin //Memory
+                                            MMU_Ctrl <= 4'b0101;
+                                        end
+                                        2'b11 : begin //Immediate operand
                                             out <= operand_buffer;
                                             bus_enable <= 1;
                                         end
-                                    end else begin
-                                        if (!instruction[4]) begin //a register
-                                            A_E <= 1;
-                                        end else begin //sum register
+                                    endcase
+                                end
+                                4'b0101 : begin //Misc. register transfer
+                                    case (instruction[5:4])
+                                        2'b00 : begin //Sum to A
                                             S_E <= 1;
+                                            A_L <= 1;
                                         end
-                                    end
+                                        2'b01 : begin //Sum to B
+                                            S_E <= 1;
+                                            B_L <= 1;
+                                        end
+                                        2'b10 : begin //SP to A
+                                            SP_E <= 1;
+                                            A_L <= 1;
+                                        end
+                                        2'b11 : begin //SP to B
+                                            SP_E <= 1;
+                                            B_L <= 1;
+                                        end
+                                    endcase
                                 end
                             endcase
                         end
                         2'b10 : begin //jump
                             JMP_Ctrl <= instruction[3:0];
+                        end
+                        2'b11 : begin //stack
+                            case (instruction[3:0]) 
+                                4'b0001 : begin //Push
+                                    case (instruction[5:4])
+                                        2'b00 :  //B register
+                                            
+                                        2'b01 : begin //A register
+                                            
+                                        end
+                                    endcase
+                                end
+                                4'b0010 : begin //Pop
+                                    case (instruction[5:4])
+                                        2'b00 :  //B register
+                                            
+                                        2'b01 : begin //A register
+                                            
+                                        end
+                                        2'b10 : begin //Empty target
+                                            
+                                        end
+                                    endcase
+                                end
+                            endcase
                         end
                     endcase
                     status <= 2'd0;
@@ -225,6 +267,8 @@ module CU (
         B_E <= 0;
         B_L <= 0;
         S_E <= 0;
+
+        SP <= 0;
 
         bus_enable <= 0;
         out <= 8'd0;

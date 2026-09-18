@@ -15,6 +15,7 @@ module registers (
         input PC_inc,
 
         output [7:0] A_Dir,
+        output [7:0] B_Dir,
         input [7:0] S_Dir_ALU,
         output [7:0] S_Dir_JMP,
         input [15:0] PC_Dir,

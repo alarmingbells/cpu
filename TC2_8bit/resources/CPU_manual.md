@@ -20,7 +20,7 @@ Operation types:
 
 Address modes (targets):
     00: B register (A register when operation is B register primary)
-    01: Sum register (Load operations only, illegal to write to S)
+    01: Indexed Memory
     10: Memory
     11: Immediate operand
 
@@ -36,3 +36,6 @@ Register sub-ops:
     0010: Target to A
     0011: B to target
     0100: Target to B
+
+Stack sub-ops:
+    0001: Transfer SP to A

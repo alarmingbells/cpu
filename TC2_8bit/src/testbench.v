@@ -5,6 +5,7 @@ module testbench;
     reg rst_n;
     wire [7:0] bus;
     wire [7:0] A_Dir;
+    wire [7:0] B_Dir;
     wire [7:0] S_Dir_ALU;
     wire [7:0] S_Dir_JMP;
     wire [15:0] PC_Dir;
@@ -52,6 +53,7 @@ module testbench;
         .S_L_ALU(S_L_ALU),
         .PC_inc(PC_inc),
         .A_Dir(A_Dir),
+        .B_Dir(B_Dir),
         .S_Dir_ALU(S_Dir_ALU),
         .S_Dir_JMP(S_Dir_JMP),
         .PC_Dir(PC_Dir),
@@ -73,6 +75,7 @@ module testbench;
         .clk(clk),
         .rst_n(rst_n),
         .bus(bus),
+        .B_Dir(B_Dir),
         .MMU_Ctrl(MMU_Ctrl),
         .data_out(data_ext),
         .addr_out(addr_ext),
