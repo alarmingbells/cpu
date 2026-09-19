@@ -12,7 +12,9 @@ module MMU (
         output [15:0] addr_out,
         output rW,
 
-        input [15:0] PC
+        input [15:0] PC,
+        input [7:0] SP_Dir,
+        output reg SP_dec
     );
 
     reg bus_enable;
@@ -20,6 +22,7 @@ module MMU (
     reg read;
     reg write;
     reg indexed;
+    reg stack;
 
     reg write_L;
 
@@ -67,6 +70,12 @@ module MMU (
                         read <= 1;
                         bus_enable <= 1;
                     end
+                    4'b1001 : begin //Latch stack push
+                        bus_enable <= 0;
+                        read <= 0;
+                        stack <= 1;
+                        write_L <= 1;
+                    end
                     default : begin
                         bus_enable <= 0;
                         read <= 0;
@@ -84,7 +93,12 @@ module MMU (
     always @(negedge clk) begin
         if (rst_n) begin
             if (write_L) begin //load system bus into memory at address buffer
-                if (indexed) address = (address + B_Dir);
+                if (indexed) begin
+                    address = (address + B_Dir);
+                end else if (stack) begin
+                    address = {8'b00000001, SP_Dir};
+                    SP_dec = 1;
+                end
                 addr_external <= address;
                 data_external <= bus;
                 bus_enable <= 0;
@@ -100,6 +114,9 @@ module MMU (
         read <= 0;
         write <= 0;
         indexed <= 0;
+        stack <= 0;
+
+        SP_dec <= 0;
 
         data_external <= 16'd0;
         addr_external <= 16'd0;

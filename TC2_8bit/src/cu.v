@@ -29,8 +29,6 @@ module CU (
 
     reg [7:0] instruction;
 
-    reg [7:0] SP;
-
     reg bus_enable;
     reg [7:0] out;
 
@@ -219,9 +217,11 @@ module CU (
                                 4'b0001 : begin //Push
                                     case (instruction[5:4])
                                         2'b00 :  //B register
-                                            
+                                            B_E <= 1;
+                                            MMU_Ctrl <= 4'b1001;
                                         2'b01 : begin //A register
-                                            
+                                            A_E <= 1;
+                                            MMU_Ctrl <= 4'b1001;
                                         end
                                     endcase
                                 end
@@ -267,8 +267,6 @@ module CU (
         B_E <= 0;
         B_L <= 0;
         S_E <= 0;
-
-        SP <= 0;
 
         bus_enable <= 0;
         out <= 8'd0;

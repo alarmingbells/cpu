@@ -11,15 +11,19 @@ module registers (
         input B_L,
         input S_L_ALU,
         input PC_Dir_L,
+        input SP_L,
+        input SP_E,
 
         input PC_inc,
+        input SP_dec,
 
         output [7:0] A_Dir,
         output [7:0] B_Dir,
         input [7:0] S_Dir_ALU,
         output [7:0] S_Dir_JMP,
         input [15:0] PC_Dir,
-        output [15:0] PC_Dir_out
+        output [15:0] PC_Dir_out,
+        output [7:0] SP_Dir
     );
 
     reg [7:0] A;
@@ -27,6 +31,7 @@ module registers (
     reg [7:0] S;
 
     reg [15:0] PC;
+    reg [7:0] SP;
 
     reg A_L_ready;
     reg B_L_ready;
@@ -34,12 +39,14 @@ module registers (
 
     assign bus = (A_E) ? A : 
                  (B_E) ? B :
-                 (S_E) ? S : 8'bZ;
+                 (S_E) ? S : 
+                 (SP_E) ? SP : 8'bZ;
 
     assign A_Dir = A;
     assign B_Dir_JMP = B;
 
     assign PC_Dir_out = PC;
+    assign SP_Dir = SP;
 
     always @(negedge clk) begin
         if (rst_n) begin
@@ -57,6 +64,8 @@ module registers (
             S_L_ready <= S_L_ALU;
             if (PC_inc)
                 PC <= PC + 1;
+            if (SP_dec)
+                SP <= SP - 1;
         end else begin
             PC <= 16'd0;
         end
@@ -67,6 +76,7 @@ module registers (
         B <= 8'b0;
         S <= 8'b0;
         PC <= 16'b0;
+        SP <= 8'hFF;
 
         A_L_ready <= 0;
         B_L_ready <= 0;
