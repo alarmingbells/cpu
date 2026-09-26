@@ -14,7 +14,7 @@ module MMU (
 
         input [15:0] PC,
         input [7:0] SP_Dir,
-        output reg SP_dec
+        output reg [1:0] SP_action
     );
 
     reg bus_enable;
@@ -49,8 +49,7 @@ module MMU (
                         bus_enable <= 1;
                     end
                     4'b0111 : begin //Standard indexed read
-                        address = (address + B_Dir);
-                        addr_external <= address; 
+                        addr_external <= (address + B_Dir);
                         read <= 1;
                         bus_enable <= 1;
                     end
@@ -76,6 +75,12 @@ module MMU (
                         stack <= 1;
                         write_L <= 1;
                     end
+                    4'b1011 : begin //Stack pop
+                        addr_external <= SP_Dir; 
+                        read <= 1;
+                        bus_enable <= 1;
+                        SP_action <= 2'b10;
+                    end
                     default : begin
                         bus_enable <= 0;
                         read <= 0;
@@ -97,7 +102,7 @@ module MMU (
                     address = (address + B_Dir);
                 end else if (stack) begin
                     address = {8'b00000001, SP_Dir};
-                    SP_dec = 1;
+                    SP_action = 1'b01;
                 end
                 addr_external <= address;
                 data_external <= bus;
@@ -116,7 +121,7 @@ module MMU (
         indexed <= 0;
         stack <= 0;
 
-        SP_dec <= 0;
+        SP_dec <= 2'b00;
 
         data_external <= 16'd0;
         addr_external <= 16'd0;

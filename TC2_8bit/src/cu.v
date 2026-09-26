@@ -228,12 +228,14 @@ module CU (
                                 4'b0010 : begin //Pop
                                     case (instruction[5:4])
                                         2'b00 :  //B register
-                                            
+                                            B_L <= 1;
+                                            MMU_Ctrl <= 4'b1011;
                                         2'b01 : begin //A register
-                                            
+                                            A_L <= 1;
+                                            MMU_Ctrl <= 4'b1011;
                                         end
                                         2'b10 : begin //Empty target
-                                            
+                                            MMU_Ctrl <= 4'b1011;
                                         end
                                     endcase
                                 end

@@ -10,6 +10,8 @@ module testbench;
     wire [7:0] S_Dir_JMP;
     wire [15:0] PC_Dir;
     wire [15:0] PC;
+    wire [7:0] SP_Dir;
+    wire [1:0] SP_action;
     wire PC_inc;
 
     wire [3:0] ALU_Ctrl;
@@ -80,7 +82,9 @@ module testbench;
         .data_out(data_ext),
         .addr_out(addr_ext),
         .rW(rW),
-        .PC(PC)
+        .PC(PC),
+        .SP_Dir(SP_Dir),
+        .SP_action(SP_action)
     );
 
     CU CU (
@@ -95,7 +99,9 @@ module testbench;
         .A_L(A_L),
         .B_E(B_E),
         .B_L(B_L),
-        .S_E(S_E)
+        .S_E(S_E),
+        .SP_Dir(SP_Dir),
+        .SP_action(SP_action)
     );
 
     assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;

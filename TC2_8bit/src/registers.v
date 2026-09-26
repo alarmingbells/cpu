@@ -15,7 +15,7 @@ module registers (
         input SP_E,
 
         input PC_inc,
-        input SP_dec,
+        input [1:0] SP_action,
 
         output [7:0] A_Dir,
         output [7:0] B_Dir,
@@ -64,8 +64,11 @@ module registers (
             S_L_ready <= S_L_ALU;
             if (PC_inc)
                 PC <= PC + 1;
-            if (SP_dec)
+            if (SP_action == 2'b01) begin
                 SP <= SP - 1;
+            end else if (SP_action == 2'b10) begin
+                SP <= SP + 1;
+            end
         end else begin
             PC <= 16'd0;
         end
