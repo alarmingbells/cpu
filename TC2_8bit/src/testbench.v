@@ -27,11 +27,12 @@ module testbench;
     wire A_L;
     wire B_L;
     wire S_E;
+    wire SP_E;
     wire S_L_ALU;
     
     wire PC_Dir_L;
 
-    reg [7:0] rom [0:15];
+    reg [7:0] rom [0:511];
 
     ALU ALU (
         .clk(clk),
@@ -52,6 +53,7 @@ module testbench;
         .A_L(A_L),
         .B_L(B_L),
         .S_E(S_E),
+        .SP_E(SP_E),
         .S_L_ALU(S_L_ALU),
         .PC_inc(PC_inc),
         .A_Dir(A_Dir),
@@ -60,7 +62,8 @@ module testbench;
         .S_Dir_JMP(S_Dir_JMP),
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
-        .PC_Dir_out(PC)
+        .PC_Dir_out(PC),
+        .SP_Dir(SP_Dir)
     );
 
     PCmover PCmover (
@@ -100,8 +103,7 @@ module testbench;
         .B_E(B_E),
         .B_L(B_L),
         .S_E(S_E),
-        .SP_Dir(SP_Dir),
-        .SP_action(SP_action)
+        .SP_E(SP_E)
     );
 
     assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;
@@ -123,7 +125,7 @@ module testbench;
         #30 rst_n = 1;
         #1000;
 
-        $display("Result at $000D: %d", rom[16'h000D]);
+        $display("Result at $01FF: %d", rom[16'h01FF]);
 
         $finish;
     end

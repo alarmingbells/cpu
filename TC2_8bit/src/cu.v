@@ -14,7 +14,8 @@ module CU (
         output reg A_L,
         output reg B_E,
         output reg B_L,
-        output reg S_E
+        output reg S_E,
+        output reg SP_E
     );
 
     //0 - instruction load
@@ -25,7 +26,7 @@ module CU (
     reg waiting;
     reg write_waiting;
     reg operand;
-    reg operand_buffer;
+    reg [7:0] operand_buffer;
 
     reg [7:0] instruction;
 
@@ -53,7 +54,7 @@ module CU (
                     if (!waiting) begin //opcode load
                         if (!write_waiting) begin
                             PC_inc <= 1;
-                            MMU_Ctrl <= 4'0110;
+                            MMU_Ctrl <= 4'b0110;
                             waiting <= 1;
                         end else write_waiting <= 0;
                     end else begin //store opcode in instruction register
@@ -69,7 +70,7 @@ module CU (
                     if (!operand) begin //first operand
                         if (!waiting) begin //operand load
                             PC_inc <= 1;
-                            MMU_Ctrl = 4'0110;
+                            MMU_Ctrl = 4'b0110;
                             waiting <= 1;
                         end else begin //store operand in MMU//JMP address low for memory reads, store result in operand buffer for immediate loads
                             PC_inc <= 0;
@@ -82,13 +83,15 @@ module CU (
                                 operand <= 1;
                             end else begin
                                 operand_buffer <= bus;
+                                waiting <= 0;
+                                status <= 2'd2;
                             end
                             waiting <= 0;
                         end
                     end else begin //second operand
                         if (!waiting) begin //operand load
                             PC_inc <= 1;
-                            MMU_Ctrl <= 4'0110;
+                            MMU_Ctrl <= 4'b0110;
                             waiting <= 1;
                         end else begin //store operand in MMU//JMP address low for memory reads, store result in operand buffer for immediate loads
                             PC_inc <= 0;
@@ -216,20 +219,24 @@ module CU (
                             case (instruction[3:0]) 
                                 4'b0001 : begin //Push
                                     case (instruction[5:4])
-                                        2'b00 :  //B register
+                                        2'b00 : begin //B register
                                             B_E <= 1;
                                             MMU_Ctrl <= 4'b1001;
+                                            write_waiting <= 1;
+                                        end
                                         2'b01 : begin //A register
                                             A_E <= 1;
                                             MMU_Ctrl <= 4'b1001;
+                                            write_waiting <= 1;
                                         end
                                     endcase
                                 end
                                 4'b0010 : begin //Pop
                                     case (instruction[5:4])
-                                        2'b00 :  //B register
+                                        2'b00 : begin //B register
                                             B_L <= 1;
                                             MMU_Ctrl <= 4'b1011;
+                                        end
                                         2'b01 : begin //A register
                                             A_L <= 1;
                                             MMU_Ctrl <= 4'b1011;
@@ -254,7 +261,7 @@ module CU (
         waiting <= 0;
         write_waiting <= 0;
         operand <= 0;
-        operand_buffer <= 0;
+        operand_buffer <= 8'd0;
 
         instruction <= 8'd0;
 
@@ -269,6 +276,7 @@ module CU (
         B_E <= 0;
         B_L <= 0;
         S_E <= 0;
+        SP_E <= 0;
 
         bus_enable <= 0;
         out <= 8'd0;

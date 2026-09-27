@@ -6,7 +6,7 @@ module MMU (
 
         input [3:0] MMU_Ctrl,
 
-        input [7:0] B_Dir;
+        input [7:0] B_Dir,
 
         inout [7:0] data_out,
         output [15:0] addr_out,
@@ -91,6 +91,8 @@ module MMU (
                 bus_enable <= 0;
                 read <= 0;
                 write_L <= 0;
+                stack <= 0;
+                indexed <= 0;
             end
         end else bus_enable <= 0;
     end
@@ -102,7 +104,7 @@ module MMU (
                     address = (address + B_Dir);
                 end else if (stack) begin
                     address = {8'b00000001, SP_Dir};
-                    SP_action = 1'b01;
+                    SP_action = 2'b01;
                 end
                 addr_external <= address;
                 data_external <= bus;
@@ -121,7 +123,7 @@ module MMU (
         indexed <= 0;
         stack <= 0;
 
-        SP_dec <= 2'b00;
+        SP_action <= 2'b00;
 
         data_external <= 16'd0;
         addr_external <= 16'd0;
