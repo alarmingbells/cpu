@@ -116,14 +116,14 @@ int parseToken(char *token) {
             opcodeBuffer = (opcodeBuffer & ~0x00) | 0x00;
             bytes[bytesPos++] = opcodeBuffer;
             state = 0;
-        } else if (strcmp(token, "S") == 0) {
+        } else if (strcmp(token, "I") == 0) {
             opcodeBuffer = (opcodeBuffer & ~0x10) | 0x10;
             state = 0;
         } else if (strcmp(token, "M") == 0) {
             opcodeBuffer = (opcodeBuffer & ~0x20) | 0x20;
             addressIncoming = true;
             state = 2;
-        } else if (strcmp(token, "I") == 0) {
+        } else if (strcmp(token, "X") == 0) {
             opcodeBuffer = (opcodeBuffer & ~0x30) | 0x30;
             state = 2;
         } else {

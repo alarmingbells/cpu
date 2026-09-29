@@ -63,7 +63,8 @@ module testbench;
         .PC_Dir(PC_Dir),
         .PC_Dir_L(PC_Dir_L),
         .PC_Dir_out(PC),
-        .SP_Dir(SP_Dir)
+        .SP_Dir(SP_Dir),
+        .SP_action(SP_action)
     );
 
     PCmover PCmover (

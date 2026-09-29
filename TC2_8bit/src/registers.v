@@ -36,6 +36,7 @@ module registers (
     reg A_L_ready;
     reg B_L_ready;
     reg S_L_ready;
+    reg PC_Dir_L_ready;
 
     assign bus = (A_E) ? A : 
                  (B_E) ? B :
@@ -43,7 +44,7 @@ module registers (
                  (SP_E) ? SP : 8'bZ;
 
     assign A_Dir = A;
-    assign B_Dir_JMP = B;
+    assign S_Dir_JMP = S;
 
     assign PC_Dir_out = PC;
     assign SP_Dir = SP;
@@ -53,7 +54,7 @@ module registers (
             A <= (A_L_ready) ? bus : A;
             B <= (B_L_ready) ? bus : B;
             S <= (S_L_ready) ? S_Dir_ALU : S;
-            PC <= (PC_Dir_L) ? PC_Dir : PC;
+            PC <= (PC_Dir_L_ready) ? PC_Dir : PC;
         end
     end
 
@@ -62,6 +63,7 @@ module registers (
             A_L_ready <= A_L;
             B_L_ready <= B_L;
             S_L_ready <= S_L_ALU;
+            PC_Dir_L_ready <= PC_Dir_L;
             if (PC_inc)
                 PC <= PC + 1;
             if (SP_action == 2'b01) begin
@@ -84,5 +86,6 @@ module registers (
         A_L_ready <= 0;
         B_L_ready <= 0;
         S_L_ready <= 0;
+        PC_Dir_L_ready <= 0;
     end
 endmodule

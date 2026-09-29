@@ -61,7 +61,7 @@ module CU (
                         PC_inc <= 0;
                         instruction <= bus;
                         waiting <= 0;
-                        if (bus[5]) begin
+                        if (bus[5:4] != 2'b00) begin
                             status <= 2'd1;
                         end else status <= 2'd2;
                     end
@@ -111,15 +111,20 @@ module CU (
                     if (instruction == 8'd0) halt <= 1; //halt
                     case (instruction[7:6])
                         2'b00 : begin //ALU operation
-                            if (instruction[5]) begin //memory address
-                                MMU_Ctrl <= 4'b0011;
-                            end else begin
-                                if (!instruction[4]) begin //b register
+                            case (instruction[5:4])
+                                2'b00 :  //B register
                                     B_E <= 1;
-                                end else begin //sum register
-                                    S_E <= 1;
+                                2'b01 : begin //Indexed memory
+                                    MMU_Ctrl <= 4'b0111;
                                 end
-                            end
+                                2'b10 : begin //Memory
+                                    MMU_Ctrl <= 4'b0101;
+                                end
+                                2'b11 : begin //Immediate operand
+                                    out <= operand_buffer;
+                                    bus_enable <= 1;
+                                end
+                            endcase
                             ALU_Ctrl <= instruction[3:0];
                         end
                         2'b01 : begin //register transfer
@@ -214,6 +219,7 @@ module CU (
                         end
                         2'b10 : begin //jump
                             JMP_Ctrl <= instruction[3:0];
+                            write_waiting <= 1;
                         end
                         2'b11 : begin //stack
                             case (instruction[3:0]) 

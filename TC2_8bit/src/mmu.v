@@ -38,6 +38,7 @@ module MMU (
     assign rW = read ? 1'b1 : (write ? 1'b0 : 1'bZ);
 
     always @(posedge clk) begin
+        SP_action <= 2'd0;
         if (rst_n) begin
             if (MMU_Ctrl != 4'b0000) begin
                 case (MMU_Ctrl)
@@ -76,7 +77,7 @@ module MMU (
                         write_L <= 1;
                     end
                     4'b1011 : begin //Stack pop
-                        addr_external <= SP_Dir; 
+                        addr_external <= {8'b00000001, (SP_Dir + 8'd1)};
                         read <= 1;
                         bus_enable <= 1;
                         SP_action <= 2'b10;
