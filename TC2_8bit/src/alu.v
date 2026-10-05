@@ -102,7 +102,10 @@ module PCmover (
         if (rst_n) begin
             if (JMP_Ctrl_L != 4'b0000) begin
                 case (JMP_Ctrl_L)
-                    4'b0011 : PC_upd <= address; //jump unconditionally
+                    4'b0011 : begin //jump unconditionally
+                        PC_upd <= address;
+                        PC_Dir_L <= 1;
+                    end
                     4'b0100 : begin //jump if S != 0
                         if (S_Dir_JMP != 7'd0) begin
                             PC_upd = address;
@@ -110,7 +113,6 @@ module PCmover (
                         end
                     end
                 endcase
-                PC_Dir_L = 1;
             end else PC_Dir_L = 0;
         end else PC_Dir_L = 0;
     end

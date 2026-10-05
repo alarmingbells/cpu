@@ -32,7 +32,11 @@ module testbench;
     
     wire PC_Dir_L;
 
-    reg [7:0] rom [0:511];
+    wire halt;
+
+    reg [7:0] rom [0:65535];
+
+    reg [15:0] cycle;
 
     ALU ALU (
         .clk(clk),
@@ -104,14 +108,25 @@ module testbench;
         .B_E(B_E),
         .B_L(B_L),
         .S_E(S_E),
-        .SP_E(SP_E)
+        .SP_E(SP_E),
+        .halt(halt)
     );
 
     assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;
 
     always begin
         #10 clk = ~clk; 
-        if (!rW) rom[addr_ext] <= data_ext;
+        if (clk == 1) begin
+            cycle = cycle + 1;
+            if (!rW) begin
+                rom[addr_ext] <= data_ext;
+                $display("Cycle #%d: Write to address %x: %x", cycle, addr_ext, data_ext);
+            end
+            if (cycle >= 10000) begin
+                $display("Cycle #%d: Too many cycles, timed out", cycle);
+                $finish;
+            end
+        end
     end
 
     initial begin
@@ -119,14 +134,16 @@ module testbench;
 
         clk = 0;
         rst_n = 0;
+        cycle = 0;
         
         $dumpfile("testbench_waveform.vcd");
         $dumpvars(0, testbench);
 
         #30 rst_n = 1;
-        #1000;
 
-        $display("Result at $01FF: %d", rom[16'h01FF]);
+        wait(halt == 1)
+
+        #20;
 
         $finish;
     end

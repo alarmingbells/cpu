@@ -44,6 +44,7 @@ module registers (
                  (SP_E) ? SP : 8'bZ;
 
     assign A_Dir = A;
+    assign B_Dir = B;
     assign S_Dir_JMP = S;
 
     assign PC_Dir_out = PC;

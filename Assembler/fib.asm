@@ -1,0 +1,29 @@
+#Start
+LDA I $00;
+STA M $2000;
+STA M $2001;
+LDA I $01;
+STA M $2002;
+
+#Loop
+LDA M $2000;
+CEQ I $64; 
+JSZ #Done; 
+
+#Body
+LDA M $2001;
+PSH A; 
+LDB M $2002;
+ADD B;
+STB M $2001;
+TSU A; 
+STA M $2002;
+
+LDA M $2000;
+ADD I $01;
+TSU A;
+STA M $2000;
+JMP #Loop;
+
+#Done
+HLT;

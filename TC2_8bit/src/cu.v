@@ -15,14 +15,15 @@ module CU (
         output reg B_E,
         output reg B_L,
         output reg S_E,
-        output reg SP_E
+        output reg SP_E,
+
+        output reg halt
     );
 
     //0 - instruction load
     //1 - operand load
     //2 - execution
     reg [1:0] status;
-    reg halt;
     reg waiting;
     reg write_waiting;
     reg operand;
@@ -61,7 +62,9 @@ module CU (
                         PC_inc <= 0;
                         instruction <= bus;
                         waiting <= 0;
-                        if (bus[5:4] != 2'b00) begin
+                        if (bus[7:6] == 2'b11 || (bus[7:6] == 2'b01 && (bus[3:0] == 4'b0110 || bus[3:0] == 4'b0101))) //no operand instructions
+                            status <= 2'd2;
+                        else if (bus[5:4] != 2'b00) begin
                             status <= 2'd1;
                         end else status <= 2'd2;
                     end
@@ -74,17 +77,17 @@ module CU (
                             waiting <= 1;
                         end else begin //store operand in MMU//JMP address low for memory reads, store result in operand buffer for immediate loads
                             PC_inc <= 0;
-                            if (!instruction[4]) begin
+                            if (instruction[5:4] == 2'b11) begin
+                                operand_buffer <= bus;
+                                waiting <= 0;
+                                status <= 2'd2;
+                            end else begin
                                 if (instruction[7]) begin
                                     JMP_Ctrl <= 4'b0001;
                                 end else begin
                                     MMU_Ctrl <= 4'b0001;
                                 end
                                 operand <= 1;
-                            end else begin
-                                operand_buffer <= bus;
-                                waiting <= 0;
-                                status <= 2'd2;
                             end
                             waiting <= 0;
                         end
@@ -118,7 +121,7 @@ module CU (
                                     MMU_Ctrl <= 4'b0111;
                                 end
                                 2'b10 : begin //Memory
-                                    MMU_Ctrl <= 4'b0101;
+                                    MMU_Ctrl <= 4'b0011;
                                 end
                                 2'b11 : begin //Immediate operand
                                     out <= operand_buffer;
@@ -154,7 +157,7 @@ module CU (
                                             MMU_Ctrl <= 4'b0111;
                                         end
                                         2'b10 : begin //Memory
-                                            MMU_Ctrl <= 4'b0101;
+                                            MMU_Ctrl <= 4'b0011;
                                         end
                                         2'b11 : begin //Immediate operand
                                             out <= operand_buffer;
@@ -187,7 +190,7 @@ module CU (
                                             MMU_Ctrl <= 4'b0111;
                                         end
                                         2'b10 : begin //Memory
-                                            MMU_Ctrl <= 4'b0101;
+                                            MMU_Ctrl <= 4'b0011;
                                         end
                                         2'b11 : begin //Immediate operand
                                             out <= operand_buffer;
@@ -195,23 +198,27 @@ module CU (
                                         end
                                     endcase
                                 end
-                                4'b0101 : begin //Misc. register transfer
+                                4'b0101 : begin //Sum transfer
                                     case (instruction[5:4])
-                                        2'b00 : begin //Sum to A
-                                            S_E <= 1;
-                                            A_L <= 1;
-                                        end
-                                        2'b01 : begin //Sum to B
+                                        2'b00 : begin //Sum to B
                                             S_E <= 1;
                                             B_L <= 1;
                                         end
-                                        2'b10 : begin //SP to A
-                                            SP_E <= 1;
+                                        2'b01 : begin //Sum to A
+                                            S_E <= 1;
                                             A_L <= 1;
                                         end
-                                        2'b11 : begin //SP to B
+                                    endcase
+                                end
+                                4'b0110 : begin //SP transfer
+                                    case (instruction[5:4])
+                                        2'b00 : begin //SP to B
                                             SP_E <= 1;
                                             B_L <= 1;
+                                        end
+                                        2'b01 : begin //SP to A
+                                            SP_E <= 1;
+                                            A_L <= 1;
                                         end
                                     endcase
                                 end
