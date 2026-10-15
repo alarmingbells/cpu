@@ -29,6 +29,8 @@ module testbench;
     wire S_E;
     wire SP_E;
     wire S_L_ALU;
+
+    wire ALU_MMU_wait;
     
     wire PC_Dir_L;
 
@@ -45,7 +47,8 @@ module testbench;
         .A_Dir(A_Dir),
         .S_Dir_ALU(S_Dir_ALU),
         .S_L_ALU(S_L_ALU),
-        .ALU_Ctrl(ALU_Ctrl)
+        .ALU_Ctrl(ALU_Ctrl),
+        .ALU_MMU_wait(ALU_MMU_wait)
     );
 
     registers registers (
@@ -109,7 +112,8 @@ module testbench;
         .B_L(B_L),
         .S_E(S_E),
         .SP_E(SP_E),
-        .halt(halt)
+        .halt(halt),
+        .ALU_MMU_wait(ALU_MMU_wait)
     );
 
     assign data_ext = (rW) ? rom[addr_ext] : 8'bZ;

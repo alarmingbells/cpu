@@ -1,0 +1,37 @@
+LDA I $80;
+STA M $0001;
+LDA I $83;
+STA M $0003;
+LDA I $80;
+STA M $0002;
+
+#Loop
+LDA M $0001;
+CGT M $0003;
+JSZ #RPVLVLSUB;
+LDA M $0003;
+SUB M $0001;
+TSU A;
+STA B;
+LDA M $0002;
+ADD B;
+TSU A;
+STA M $0002;
+JMP #EndLoop;
+
+#RPVLVLSUB
+SUB M $0003;
+TSU A;
+STA B;
+LDA M $0002;
+SUB B;
+TSU A;
+STA M $0002;
+JMP #EndLoop;
+
+
+
+
+#EndLoop
+PSH A;
+JMP #Loop;

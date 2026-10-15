@@ -31,6 +31,19 @@ typedef struct {
 PendingLabel pendingLabels[MAX_PENDING_LABELS];
 int pendingLabelCount = 0;
 
+void resetCompiler(void) {
+    memset(bytes, 0, sizeof(bytes));
+    bytesPos = 0;
+    state = 0;
+    opcodeBuffer = 0;
+    addressIncoming = false;
+    noOperand = false;
+    memset(labels, 0, sizeof(labels));
+    labelCount = 0;
+    memset(pendingLabels, 0, sizeof(pendingLabels));
+    pendingLabelCount = 0;
+}
+
 void addPendingLabel(const char *name, int address) {
     if (pendingLabelCount < MAX_PENDING_LABELS) {
         strncpy(pendingLabels[pendingLabelCount].name, name, sizeof(pendingLabels[pendingLabelCount].name) - 1);
@@ -125,7 +138,7 @@ void throw(char *token, int code) {
 }
 
 int parseToken(char *token) {
-    //printf("%s > %d\n", token, state);
+    //printf("%s > %d, %d\n", token, state, addressIncoming);
     if (state == 0) {
         addressIncoming = false;
         noOperand = false;
@@ -236,7 +249,10 @@ int parseToken(char *token) {
         } else if (strcmp(token, "A") == 0) {
             if (opcodeBuffer == 0b11000001 || opcodeBuffer == 0b11000010 || opcodeBuffer == 0b01000101 || opcodeBuffer == 0b01000110) {
                 opcodeBuffer = (opcodeBuffer & ~0x30) | 0x10;
-                state = 2;
+                opcodeBuffer = (opcodeBuffer & ~0x00) | 0x00;
+                bytes[bytesPos++] = opcodeBuffer;
+                noOperand = true;
+                state = 0;
             } else  {
                 throw(token, 2);
             }
@@ -352,6 +368,8 @@ int assemble(char *content) {
 int main() {
     printf("TCX 8 bit Assembler V0.1 2026\n");
     while (true) {
+        resetCompiler();
+        
         printf("\nTC1>");
         char filename[500];
         fgets(filename, sizeof(filename), stdin);

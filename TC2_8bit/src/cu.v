@@ -17,6 +17,8 @@ module CU (
         output reg S_E,
         output reg SP_E,
 
+        output reg ALU_MMU_wait,
+
         output reg halt
     );
 
@@ -48,6 +50,8 @@ module CU (
         S_E = 0;
         B_L = 0;
         A_L = 0;
+
+        ALU_MMU_wait = 0;
 
         if (rst_n & !halt) begin
             case (status)
@@ -119,9 +123,11 @@ module CU (
                                     B_E <= 1;
                                 2'b01 : begin //Indexed memory
                                     MMU_Ctrl <= 4'b0111;
+                                    ALU_MMU_wait <= 1;
                                 end
                                 2'b10 : begin //Memory
                                     MMU_Ctrl <= 4'b0011;
+                                    ALU_MMU_wait <= 1;
                                 end
                                 2'b11 : begin //Immediate operand
                                     out <= operand_buffer;
@@ -290,6 +296,8 @@ module CU (
         B_L <= 0;
         S_E <= 0;
         SP_E <= 0;
+
+        ALU_MMU_wait <= 0;
 
         bus_enable <= 0;
         out <= 8'd0;

@@ -7,6 +7,9 @@ module ALU (
         input [3:0] ALU_Ctrl,
 
         input [7:0] A_Dir,
+
+        input ALU_MMU_wait,
+
         output [7:0] S_Dir_ALU,
         output reg S_L_ALU
     );
@@ -14,8 +17,11 @@ module ALU (
     reg [7:0] sum;
     reg [7:0] out;
 
+    reg carry;
+
     reg [3:0] ALU_Ctrl_L;
     reg [7:0] bus_L;
+    reg wait_for_bus;
 
     assign S_Dir_ALU = (S_L_ALU) ? sum : 8'bZ;
 
@@ -23,6 +29,7 @@ module ALU (
         if (ALU_Ctrl != 4'b0000) begin 
             ALU_Ctrl_L <= ALU_Ctrl;
             bus_L <= bus;
+            wait_for_bus <= ALU_MMU_wait;
         end else begin
             ALU_Ctrl_L <= 0;
             bus_L <= 0;
@@ -32,6 +39,9 @@ module ALU (
     always @(negedge clk) begin
         if (rst_n) begin
             if (ALU_Ctrl_L != 4'b0000) begin
+                if (wait_for_bus) begin
+                    bus_L = bus;
+                end
                 case (ALU_Ctrl_L)
                     4'b0001 : sum = (A_Dir + bus_L); //self explanatory arithmetic
                     4'b0010 : sum = (A_Dir - bus_L);
@@ -48,6 +58,9 @@ module ALU (
                     4'b1011 : sum = (A_Dir <  bus_L);
                     4'b1100 : sum = (A_Dir >= bus_L);
                     4'b1101 : sum = (A_Dir <= bus_L);
+
+                    4'b1110 : carry <= 0;
+                    4'b1111 : carry <= 1;
                 endcase
                 S_L_ALU = 1; 
             end else S_L_ALU = 0;
@@ -57,6 +70,7 @@ module ALU (
     always @(posedge rst_n) begin
         sum <= 8'd0;
         out <= 8'd0;
+        carry <= 0;
         S_L_ALU <= 0;
 
         ALU_Ctrl_L <= 4'd0;
