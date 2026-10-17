@@ -1,0 +1,511 @@
+//
+//Written by GowinSynthesis
+//Tool Version "V1.9.12 (64-bit)"
+//Fri Oct 16 23:28:20 2026
+
+//Source file index table:
+//file0 "\C:/Users/funlu/Desktop/cpu/TC1_8bit/Documents/stepper_test/src/stepper_test.v"
+`timescale 100 ps/100 ps
+module stepper (
+  clk_d,
+  lower_d,
+  raise_d,
+  rst_n_d,
+  step_d
+)
+;
+input clk_d;
+input lower_d;
+input raise_d;
+input rst_n_d;
+output [3:0] step_d;
+wire n19_4;
+wire n20_3;
+wire n21_3;
+wire step_2_5;
+wire n67_68;
+wire n19_5;
+wire n20_4;
+wire n67_69;
+wire n67_70;
+wire n67_71;
+wire n22_5;
+wire stepClk;
+wire n65_1;
+wire n65_2;
+wire n64_1;
+wire n64_2;
+wire n63_1;
+wire n63_2;
+wire n62_1;
+wire n62_2;
+wire n61_1;
+wire n61_2;
+wire n60_1;
+wire n60_2;
+wire n59_1;
+wire n59_2;
+wire n58_1;
+wire n58_2;
+wire n57_1;
+wire n57_2;
+wire n56_1;
+wire n56_2;
+wire n55_1;
+wire n55_2;
+wire n54_1;
+wire n54_2;
+wire n53_1;
+wire n53_2;
+wire n52_1;
+wire n52_2;
+wire n51_1;
+wire n51_0_COUT;
+wire n42_5;
+wire n69_5;
+wire n66_6;
+wire [15:0] divider;
+wire VCC;
+wire GND;
+  LUT4 n19_s0 (
+    .F(n19_4),
+    .I0(step_d[0]),
+    .I1(lower_d),
+    .I2(step_d[2]),
+    .I3(n19_5) 
+);
+defparam n19_s0.INIT=16'h1800;
+  LUT3 n20_s0 (
+    .F(n20_3),
+    .I0(step_d[0]),
+    .I1(step_d[2]),
+    .I2(n20_4) 
+);
+defparam n20_s0.INIT=8'h01;
+  LUT4 n21_s0 (
+    .F(n21_3),
+    .I0(step_d[0]),
+    .I1(step_d[2]),
+    .I2(lower_d),
+    .I3(n19_5) 
+);
+defparam n21_s0.INIT=16'h4200;
+  LUT2 step_2_s3 (
+    .F(step_2_5),
+    .I0(lower_d),
+    .I1(raise_d) 
+);
+defparam step_2_s3.INIT=4'hE;
+  LUT4 n67_s48 (
+    .F(n67_68),
+    .I0(n67_69),
+    .I1(divider[13]),
+    .I2(divider[14]),
+    .I3(divider[15]) 
+);
+defparam n67_s48.INIT=16'hF400;
+  LUT2 n19_s1 (
+    .F(n19_5),
+    .I0(step_d[1]),
+    .I1(step_d[3]) 
+);
+defparam n19_s1.INIT=4'h1;
+  LUT4 n20_s1 (
+    .F(n20_4),
+    .I0(lower_d),
+    .I1(step_d[2]),
+    .I2(step_d[1]),
+    .I3(step_d[3]) 
+);
+defparam n20_s1.INIT=16'hFDE3;
+  LUT4 n67_s49 (
+    .F(n67_69),
+    .I0(divider[6]),
+    .I1(n67_70),
+    .I2(n67_71),
+    .I3(divider[12]) 
+);
+defparam n67_s49.INIT=16'h007F;
+  LUT4 n67_s50 (
+    .F(n67_70),
+    .I0(divider[8]),
+    .I1(divider[9]),
+    .I2(divider[10]),
+    .I3(divider[11]) 
+);
+defparam n67_s50.INIT=16'h8000;
+  LUT4 n67_s51 (
+    .F(n67_71),
+    .I0(divider[4]),
+    .I1(divider[5]),
+    .I2(divider[3]),
+    .I3(divider[7]) 
+);
+defparam n67_s51.INIT=16'hFE00;
+  LUT4 n22_s1 (
+    .F(n22_5),
+    .I0(step_d[1]),
+    .I1(step_d[3]),
+    .I2(step_d[0]),
+    .I3(n20_4) 
+);
+defparam n22_s1.INIT=16'hEFF0;
+  DFFR divider_15_s0 (
+    .Q(divider[15]),
+    .D(n51_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_14_s0 (
+    .Q(divider[14]),
+    .D(n52_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_13_s0 (
+    .Q(divider[13]),
+    .D(n53_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_12_s0 (
+    .Q(divider[12]),
+    .D(n54_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_11_s0 (
+    .Q(divider[11]),
+    .D(n55_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_10_s0 (
+    .Q(divider[10]),
+    .D(n56_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_9_s0 (
+    .Q(divider[9]),
+    .D(n57_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_8_s0 (
+    .Q(divider[8]),
+    .D(n58_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_7_s0 (
+    .Q(divider[7]),
+    .D(n59_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_6_s0 (
+    .Q(divider[6]),
+    .D(n60_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_5_s0 (
+    .Q(divider[5]),
+    .D(n61_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_4_s0 (
+    .Q(divider[4]),
+    .D(n62_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_3_s0 (
+    .Q(divider[3]),
+    .D(n63_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_2_s0 (
+    .Q(divider[2]),
+    .D(n64_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_1_s0 (
+    .Q(divider[1]),
+    .D(n65_1),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFR divider_0_s0 (
+    .Q(divider[0]),
+    .D(n66_6),
+    .CLK(clk_d),
+    .RESET(n42_5) 
+);
+  DFFRE step_2_s1 (
+    .Q(step_d[2]),
+    .D(n20_3),
+    .CLK(stepClk),
+    .CE(step_2_5),
+    .RESET(n42_5) 
+);
+defparam step_2_s1.INIT=1'b0;
+  DFFRE step_1_s1 (
+    .Q(step_d[1]),
+    .D(n21_3),
+    .CLK(stepClk),
+    .CE(step_2_5),
+    .RESET(n42_5) 
+);
+defparam step_1_s1.INIT=1'b0;
+  DFFRE step_0_s1 (
+    .Q(step_d[0]),
+    .D(n22_5),
+    .CLK(stepClk),
+    .CE(step_2_5),
+    .RESET(n42_5) 
+);
+defparam step_0_s1.INIT=1'b0;
+  DFFRE stepClk_s1 (
+    .Q(stepClk),
+    .D(n69_5),
+    .CLK(clk_d),
+    .CE(n67_68),
+    .RESET(n42_5) 
+);
+defparam stepClk_s1.INIT=1'b0;
+  DFFRE step_3_s1 (
+    .Q(step_d[3]),
+    .D(n19_4),
+    .CLK(stepClk),
+    .CE(step_2_5),
+    .RESET(n42_5) 
+);
+defparam step_3_s1.INIT=1'b0;
+  ALU n65_s (
+    .SUM(n65_1),
+    .COUT(n65_2),
+    .I0(divider[1]),
+    .I1(divider[0]),
+    .I3(GND),
+    .CIN(GND) 
+);
+defparam n65_s.ALU_MODE=0;
+  ALU n64_s (
+    .SUM(n64_1),
+    .COUT(n64_2),
+    .I0(divider[2]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n65_2) 
+);
+defparam n64_s.ALU_MODE=0;
+  ALU n63_s (
+    .SUM(n63_1),
+    .COUT(n63_2),
+    .I0(divider[3]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n64_2) 
+);
+defparam n63_s.ALU_MODE=0;
+  ALU n62_s (
+    .SUM(n62_1),
+    .COUT(n62_2),
+    .I0(divider[4]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n63_2) 
+);
+defparam n62_s.ALU_MODE=0;
+  ALU n61_s (
+    .SUM(n61_1),
+    .COUT(n61_2),
+    .I0(divider[5]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n62_2) 
+);
+defparam n61_s.ALU_MODE=0;
+  ALU n60_s (
+    .SUM(n60_1),
+    .COUT(n60_2),
+    .I0(divider[6]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n61_2) 
+);
+defparam n60_s.ALU_MODE=0;
+  ALU n59_s (
+    .SUM(n59_1),
+    .COUT(n59_2),
+    .I0(divider[7]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n60_2) 
+);
+defparam n59_s.ALU_MODE=0;
+  ALU n58_s (
+    .SUM(n58_1),
+    .COUT(n58_2),
+    .I0(divider[8]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n59_2) 
+);
+defparam n58_s.ALU_MODE=0;
+  ALU n57_s (
+    .SUM(n57_1),
+    .COUT(n57_2),
+    .I0(divider[9]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n58_2) 
+);
+defparam n57_s.ALU_MODE=0;
+  ALU n56_s (
+    .SUM(n56_1),
+    .COUT(n56_2),
+    .I0(divider[10]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n57_2) 
+);
+defparam n56_s.ALU_MODE=0;
+  ALU n55_s (
+    .SUM(n55_1),
+    .COUT(n55_2),
+    .I0(divider[11]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n56_2) 
+);
+defparam n55_s.ALU_MODE=0;
+  ALU n54_s (
+    .SUM(n54_1),
+    .COUT(n54_2),
+    .I0(divider[12]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n55_2) 
+);
+defparam n54_s.ALU_MODE=0;
+  ALU n53_s (
+    .SUM(n53_1),
+    .COUT(n53_2),
+    .I0(divider[13]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n54_2) 
+);
+defparam n53_s.ALU_MODE=0;
+  ALU n52_s (
+    .SUM(n52_1),
+    .COUT(n52_2),
+    .I0(divider[14]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n53_2) 
+);
+defparam n52_s.ALU_MODE=0;
+  ALU n51_s (
+    .SUM(n51_1),
+    .COUT(n51_0_COUT),
+    .I0(divider[15]),
+    .I1(GND),
+    .I3(GND),
+    .CIN(n52_2) 
+);
+defparam n51_s.ALU_MODE=0;
+  INV n42_s2 (
+    .O(n42_5),
+    .I(rst_n_d) 
+);
+  INV n69_s2 (
+    .O(n69_5),
+    .I(stepClk) 
+);
+  INV n66_s2 (
+    .O(n66_6),
+    .I(divider[0]) 
+);
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+endmodule /* stepper */
+module top (
+  clk,
+  rst_n,
+  raise,
+  lower,
+  step
+)
+;
+input clk;
+input rst_n;
+input raise;
+input lower;
+output [3:0] step;
+wire clk_d;
+wire rst_n_d;
+wire raise_d;
+wire lower_d;
+wire [3:0] step_d;
+wire VCC;
+wire GND;
+  IBUF clk_ibuf (
+    .O(clk_d),
+    .I(clk) 
+);
+  IBUF rst_n_ibuf (
+    .O(rst_n_d),
+    .I(rst_n) 
+);
+  IBUF raise_ibuf (
+    .O(raise_d),
+    .I(raise) 
+);
+  IBUF lower_ibuf (
+    .O(lower_d),
+    .I(lower) 
+);
+  OBUF step_0_obuf (
+    .O(step[0]),
+    .I(step_d[0]) 
+);
+  OBUF step_1_obuf (
+    .O(step[1]),
+    .I(step_d[1]) 
+);
+  OBUF step_2_obuf (
+    .O(step[2]),
+    .I(step_d[2]) 
+);
+  OBUF step_3_obuf (
+    .O(step[3]),
+    .I(step_d[3]) 
+);
+  stepper stepper (
+    .clk_d(clk_d),
+    .lower_d(lower_d),
+    .raise_d(raise_d),
+    .rst_n_d(rst_n_d),
+    .step_d(step_d[3:0])
+);
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+  GSR GSR (
+    .GSRI(VCC) 
+);
+endmodule /* top */

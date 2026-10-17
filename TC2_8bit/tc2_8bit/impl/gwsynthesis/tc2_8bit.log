@@ -1,0 +1,55 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\alu.v'
+Analyzing Verilog file 'C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\cu.v'
+Analyzing Verilog file 'C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\mmu.v'
+Analyzing Verilog file 'C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\registers.v'
+Analyzing Verilog file 'C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v'
+Compiling module 'testbench'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":3)
+WARN  (EX3858) : System task 'dumpfile' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":143)
+WARN  (EX3858) : System task 'dumpvars' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":144)
+WARN  (EX2629) : Delay control is not supported for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":146)
+WARN  (EX3840) : Wait statement is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":150)
+WARN  (EX3858) : System task 'finish' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":152)
+WARN  (EX3780) : Using initial value of 'rst_n' since it is never assigned("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":153)
+Compiling module 'ALU'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\alu.v":1)
+Compiling module 'registers'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\registers.v":1)
+WARN  (EX3791) : Expression size 17 truncated to fit in target size 16("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\registers.v":73)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 8("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\registers.v":75)
+WARN  (EX3791) : Expression size 9 truncated to fit in target size 8("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\registers.v":77)
+Compiling module 'PCmover'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\alu.v":102)
+Compiling module 'MMU'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\mmu.v":1)
+Compiling module 'CU'("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\cu.v":1)
+WARN  (EX2629) : Delay control is not supported for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":122)
+WARN  (EX3791) : Expression size 17 truncated to fit in target size 16("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":124)
+WARN  (EX3858) : System task 'display' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":127)
+WARN  (EX3858) : System task 'display' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":130)
+WARN  (EX3858) : System task 'finish' is ignored for synthesis("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":131)
+WARN  (EX2420) : Latch inferred for net 'cycle[15]'; We do not recommend the use of latches in FPGA designs, as they may lead to timing problems("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":134)
+WARN  (EX2565) : Input 'SP_L' on this instance is undriven. Assigning to 0, simulation mismatch possible. Please assign the input or remove the declaration("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":75)
+NOTE  (EX0101) : Current top module is "testbench"
+WARN  (EX0203) : Top module "testbench" has no ports("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":3)
+[5%] Running netlist conversion ...
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+WARN  (NL0002) : The module "ALU" instantiated to "ALU" is swept in optimizing("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":52)
+WARN  (NL0002) : The module "CU" instantiated to "CU" is swept in optimizing("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":117)
+WARN  (NL0002) : The module "MMU" instantiated to "MMU" is swept in optimizing("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":99)
+WARN  (NL0002) : The module "PCmover" instantiated to "PCmover" is swept in optimizing("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":85)
+WARN  (NL0002) : The module "registers" instantiated to "registers" is swept in optimizing("C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\src\testbench.v":75)
+[95%] Generate netlist file "C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\impl\gwsynthesis\tc2_8bit.vg" completed
+[100%] Generate report file "C:\Users\funlu\Desktop\cpu\TC2_8bit\tc2_8bit\impl\gwsynthesis\tc2_8bit_syn.rpt.html" completed
+GowinSynthesis finish

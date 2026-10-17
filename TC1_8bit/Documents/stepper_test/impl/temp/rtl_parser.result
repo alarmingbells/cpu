@@ -1,0 +1,20 @@
+[
+ {
+  "InstFile" : "C:/Users/funlu/Desktop/cpu/TC1_8bit/Documents/stepper_test/src/stepper_test.v",
+  "InstLine" : 1,
+  "InstName" : "top",
+  "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC1_8bit/Documents/stepper_test/src/stepper_test.v",
+  "ModuleLine" : 1,
+  "ModuleName" : "top",
+  "SubInsts" : [
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC1_8bit/Documents/stepper_test/src/stepper_test.v",
+    "InstLine" : 11,
+    "InstName" : "stepper",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC1_8bit/Documents/stepper_test/src/stepper_test.v",
+    "ModuleLine" : 21,
+    "ModuleName" : "stepper"
+   }
+  ]
+ }
+]

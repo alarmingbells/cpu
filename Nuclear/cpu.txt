@@ -1,0 +1,19 @@
+TC2
+Stepper driver circuit
+	Stepper module
+	I2C Driver
+OLED circuit
+	OLED driver reactor
+	OLED driver MCC
+	OLED driver turbine
+	I2C Driver
+Control & core map circuit
+	Main i2c bus
+7 Seg driver
+	7 Seg driver
+	I2C driver
+Audio circuit
+	reactor audio channel
+	turbine audio channel
+	MCC audio channel
+	Mixer 

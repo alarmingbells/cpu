@@ -26,13 +26,18 @@ module ALU (
     assign S_Dir_ALU = (S_L_ALU) ? sum : 8'bZ;
 
     always @(posedge clk) begin
-        if (ALU_Ctrl != 4'b0000) begin 
-            ALU_Ctrl_L <= ALU_Ctrl;
-            bus_L <= bus;
-            wait_for_bus <= ALU_MMU_wait;
+        if (rst_n) begin
+            if (ALU_Ctrl != 4'b0000) begin 
+                ALU_Ctrl_L <= ALU_Ctrl;
+                bus_L <= bus;
+                wait_for_bus <= ALU_MMU_wait;
+            end else begin
+                ALU_Ctrl_L <= 0;
+                bus_L <= 0;
+            end
         end else begin
-            ALU_Ctrl_L <= 0;
-            bus_L <= 0;
+            ALU_Ctrl_L <= 4'd0;
+            bus_L <= 8'd0;
         end
     end
 
@@ -40,43 +45,57 @@ module ALU (
         if (rst_n) begin
             if (ALU_Ctrl_L != 4'b0000) begin
                 if (wait_for_bus) begin
-                    bus_L = bus;
+                    case (ALU_Ctrl_L)
+                        4'b0001 : sum = (A_Dir + bus); //self explanatory arithmetic
+                        4'b0010 : sum = (A_Dir - bus);
+                        4'b0011 : sum = (A_Dir & bus);
+                        4'b0100 : sum = (A_Dir | bus);
+                        4'b0101 : sum = (A_Dir ^ bus); 
+
+                        4'b0110 : sum = (A_Dir << bus);
+                        4'b0111 : sum = (A_Dir >> bus);
+
+                        4'b1000 : sum = (A_Dir == bus);
+                        4'b1001 : sum = (A_Dir != bus);
+                        4'b1010 : sum = (A_Dir >  bus);
+                        4'b1011 : sum = (A_Dir <  bus);
+                        4'b1100 : sum = (A_Dir >= bus);
+                        4'b1101 : sum = (A_Dir <= bus);
+
+                        4'b1110 : carry <= 0;
+                        4'b1111 : carry <= 1;
+                    endcase
+                end else begin
+                    case (ALU_Ctrl_L)
+                        4'b0001 : sum = (A_Dir + bus_L); //self explanatory arithmetic
+                        4'b0010 : sum = (A_Dir - bus_L);
+                        4'b0011 : sum = (A_Dir & bus_L);
+                        4'b0100 : sum = (A_Dir | bus_L);
+                        4'b0101 : sum = (A_Dir ^ bus_L); 
+
+                        4'b0110 : sum = (A_Dir << bus_L);
+                        4'b0111 : sum = (A_Dir >> bus_L);
+
+                        4'b1000 : sum = (A_Dir == bus_L);
+                        4'b1001 : sum = (A_Dir != bus_L);
+                        4'b1010 : sum = (A_Dir >  bus_L);
+                        4'b1011 : sum = (A_Dir <  bus_L);
+                        4'b1100 : sum = (A_Dir >= bus_L);
+                        4'b1101 : sum = (A_Dir <= bus_L);
+
+                        4'b1110 : carry <= 0;
+                        4'b1111 : carry <= 1;
+                    endcase
                 end
-                case (ALU_Ctrl_L)
-                    4'b0001 : sum = (A_Dir + bus_L); //self explanatory arithmetic
-                    4'b0010 : sum = (A_Dir - bus_L);
-                    4'b0011 : sum = (A_Dir & bus_L);
-                    4'b0100 : sum = (A_Dir | bus_L);
-                    4'b0101 : sum = (A_Dir ^ bus_L); 
-
-                    4'b0110 : sum = (A_Dir << bus_L);
-                    4'b0111 : sum = (A_Dir >> bus_L);
-
-                    4'b1000 : sum = (A_Dir == bus_L);
-                    4'b1001 : sum = (A_Dir != bus_L);
-                    4'b1010 : sum = (A_Dir >  bus_L);
-                    4'b1011 : sum = (A_Dir <  bus_L);
-                    4'b1100 : sum = (A_Dir >= bus_L);
-                    4'b1101 : sum = (A_Dir <= bus_L);
-
-                    4'b1110 : carry <= 0;
-                    4'b1111 : carry <= 1;
-                endcase
                 S_L_ALU = 1; 
             end else S_L_ALU = 0;
-        end else S_L_ALU = 0;
-    end;
-
-    always @(posedge rst_n) begin
-        sum <= 8'd0;
-        out <= 8'd0;
-        carry <= 0;
-        S_L_ALU <= 0;
-
-        ALU_Ctrl_L <= 4'd0;
-        bus_L <= 8'd0;
-    end 
-
+        end else begin
+            S_L_ALU = 0;
+            sum <= 8'd0;
+            out <= 8'd0;
+            carry <= 0;
+        end
+    end
 
 endmodule
 
@@ -109,6 +128,9 @@ module PCmover (
                 endcase
             end
             JMP_Ctrl_L <= JMP_Ctrl;
+        end else begin
+            JMP_Ctrl_L <= 4'd0;
+            address <= 16'd0;
         end
     end
 
@@ -128,16 +150,9 @@ module PCmover (
                     end
                 endcase
             end else PC_Dir_L = 0;
-        end else PC_Dir_L = 0;
+        end else begin
+            PC_Dir_L = 0;
+            PC_upd <= 16'd0;
+        end
     end
-
-    always @(posedge rst_n) begin
-        PC_Dir_L <= 0;
-        PC_upd <= 16'd0;
-
-        JMP_Ctrl_L <= 4'd0;
-
-        address <= 16'd0;
-    end
-
 endmodule

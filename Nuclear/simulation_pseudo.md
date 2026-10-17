@@ -1,12 +1,16 @@
-//Start signal : $0000
-//Steam flow: $0001
-//RPV level: $0002
-//Feedwater flow: $0003
+Start signal : $0000
+Steam flow: $0001
+RPV level: $0002
+Feedwater flow: $0003
+Reactor temp offset: $0004
+Reactor power: $0005
+Rods positions: $0010-001B
+Rod temperatures: $0020-002B
 
 Values:
     -reactor power
     -reactor water level
-    -recirculation
+    -deaerator water level
     -rod position x12
     -rod temp x12
     -rod fuel values x12
@@ -15,6 +19,7 @@ Values:
     -reactor temperature
     -steam flow
     -feedwater flow
+    -condenser outflow
     -turbine rpm
     -generator load
     -turbine flow
@@ -24,7 +29,7 @@ Values:
 
 Controls:
     Feedwater valve (3 position switch, +/- feedwater flow)
-    Recirc valve (3 position switch, +/- recirc)
+    Condenser valve (3 position switch, +/- condenser outflow)
     Rod movement lever (3 position lever, +/- selected rods position)
     Rod selection (12 individual buttons, sets rod selection)
     SCRAM (Button)
@@ -47,17 +52,16 @@ Displays:
             turbine valve %
             electrical demand/load
     Reactor OLED:
-        Average position/temperature of selected rods
+        Position & temp of selected rod
         Reactor temp
-        Recirc valve %
     Cooling OLED:
         Steam flow
         Feedwater flow
-        Feedwater valve %
+        Condenser outflow
 
 Annunciator lights:
-    HIGH RPV LEVEL
-    LOW RPV LEVEL
+    DEAERATOR LEVEL TROUBLE
+    REACTOR LEVEL TROUBLE
     REACTOR SCRAM
     ROD OVERHEATING
     TURBINE TRIP
@@ -65,8 +69,7 @@ Annunciator lights:
 
 Relations:
     Reactor power:
-        ++ Rods position (heavy inertia)
-        +++ Recirc (medium inertia)
+        +++ Rods position (heavy inertia)
     Steam flow:
         +++ Reactor power
         + Reactor temp
@@ -99,6 +102,7 @@ Trip conditions:
     Turbine trip:
         High reactor pressure (less than required for SCRAM)
         High reactor level
+        High RPM
         Out of phase sync
         Low reactor pressure
 

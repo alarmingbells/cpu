@@ -25,6 +25,7 @@ module MMU (
     reg stack;
 
     reg write_L;
+    reg [7:0] write_bus_L;
 
     reg [7:0] data_external;
     reg [15:0] addr_external;
@@ -38,8 +39,22 @@ module MMU (
     assign rW = read ? 1'b1 : (write ? 1'b0 : 1'bZ);
 
     always @(posedge clk) begin
-        SP_action <= 2'd0;
         if (rst_n) begin
+            if (write_L) begin
+                write_L <= 0;
+                if (indexed) begin
+                    address = (address + B_Dir);
+                end else if (stack) begin
+                    address = {8'b00000001, SP_Dir};
+                    SP_action = 2'b01;
+                end
+                addr_external <= address;
+                data_external <= write_bus_L;
+                bus_enable <= 0;
+                write <= 1;
+            end else begin
+                write <= 0;
+            end
             if (MMU_Ctrl != 4'b0000) begin
                 case (MMU_Ctrl)
                     4'b0001 : address[7:0] <= bus; //load low byte of addr
@@ -91,45 +106,34 @@ module MMU (
             end else begin
                 bus_enable <= 0;
                 read <= 0;
-                write_L <= 0;
                 stack <= 0;
                 indexed <= 0;
             end
-        end else bus_enable <= 0;
+        end else begin
+            bus_enable <= 0;
+            SP_action <= 2'b00;
+
+            read <= 0;
+            write <= 0;
+            indexed <= 0;
+            stack <= 0;
+            write_L <= 0;
+            data_external <= 16'd0;
+            addr_external <= 16'd0;
+
+            address <= 16'd0;
+        end
     end
 
     always @(negedge clk) begin
         if (rst_n) begin
-            if (write_L) begin //load system bus into memory at address buffer
-                if (indexed) begin
-                    address = (address + B_Dir);
-                end else if (stack) begin
-                    address = {8'b00000001, SP_Dir};
-                    SP_action = 2'b01;
-                end
-                addr_external <= address;
-                data_external <= bus;
-                bus_enable <= 0;
-                write <= 1;
+            if (write_L) begin
+                write_bus_L <= bus;
             end else begin
-                write <= 0;
+                write_bus_L <= 8'd0;
             end
-        end else bus_enable <= 0;
+        end else begin 
+            write_bus_L <= 8'd0;
+        end
     end
-
-    always @(posedge rst_n) begin
-        bus_enable <= 0;
-        read <= 0;
-        write <= 0;
-        indexed <= 0;
-        stack <= 0;
-
-        SP_action <= 2'b00;
-
-        data_external <= 16'd0;
-        addr_external <= 16'd0;
-
-        address <= 16'd0;
-    end
-
 endmodule

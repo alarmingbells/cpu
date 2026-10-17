@@ -1,0 +1,28 @@
+//
+//Written by GowinSynthesis
+//Tool Version "V1.9.12 (64-bit)"
+//Sat Oct 17 00:38:59 2026
+
+//Source file index table:
+//file0 "\C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/alu.v"
+//file1 "\C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/cu.v"
+//file2 "\C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/mmu.v"
+//file3 "\C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/registers.v"
+//file4 "\C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v"
+`timescale 100 ps/100 ps
+module testbench (
+
+)
+;
+wire VCC;
+wire GND;
+  VCC VCC_cZ (
+    .V(VCC)
+);
+  GND GND_cZ (
+    .G(GND)
+);
+  GSR GSR (
+    .GSRI(VCC) 
+);
+endmodule /* testbench */

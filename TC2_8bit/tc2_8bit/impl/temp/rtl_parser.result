@@ -1,0 +1,52 @@
+[
+ {
+  "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+  "InstLine" : 3,
+  "InstName" : "testbench",
+  "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+  "ModuleLine" : 3,
+  "ModuleName" : "testbench",
+  "SubInsts" : [
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+    "InstLine" : 43,
+    "InstName" : "ALU",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/alu.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "ALU"
+   },
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+    "InstLine" : 54,
+    "InstName" : "registers",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/registers.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "registers"
+   },
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+    "InstLine" : 77,
+    "InstName" : "PCmover",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/alu.v",
+    "ModuleLine" : 102,
+    "ModuleName" : "PCmover"
+   },
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+    "InstLine" : 87,
+    "InstName" : "MMU",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/mmu.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "MMU"
+   },
+   {
+    "InstFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/testbench.v",
+    "InstLine" : 101,
+    "InstName" : "CU",
+    "ModuleFile" : "C:/Users/funlu/Desktop/cpu/TC2_8bit/tc2_8bit/src/cu.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "CU"
+   }
+  ]
+ }
+]

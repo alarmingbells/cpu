@@ -1,0 +1,10 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW2AR-18" pn="GW2AR-LV18QN88PC8/I7">gw2ar18-018</Device>
+    <FileList>
+        <File path="src/stepper_test.v" type="file.verilog" enable="1"/>
+    </FileList>
+</Project>

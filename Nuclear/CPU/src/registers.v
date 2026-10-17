@@ -1,0 +1,92 @@
+module registers (
+        input clk,
+        input rst_n, 
+
+        inout [7:0] bus,
+
+        input A_E,
+        input B_E,
+        input S_E,
+        input A_L,
+        input B_L,
+        input S_L_ALU,
+        input PC_Dir_L,
+        input SP_L,
+        input SP_E,
+
+        input PC_inc,
+        input [1:0] SP_action,
+
+        output [7:0] A_Dir,
+        output [7:0] B_Dir,
+        input [7:0] S_Dir_ALU,
+        output [7:0] S_Dir_JMP,
+        input [15:0] PC_Dir,
+        output [15:0] PC_Dir_out,
+        output [7:0] SP_Dir
+    );
+
+    reg [7:0] A;
+    reg [7:0] B;
+    reg [7:0] S;
+
+    reg [15:0] PC;
+    reg [7:0] SP;
+
+    reg A_L_ready;
+    reg B_L_ready;
+    reg S_L_ready;
+    reg PC_Dir_L_ready;
+
+    assign bus = (A_E) ? A : 
+                 (B_E) ? B :
+                 (S_E) ? S : 
+                 (SP_E) ? SP : 8'bZ;
+
+    assign A_Dir = A;
+    assign B_Dir = B;
+    assign S_Dir_JMP = S;
+
+    assign PC_Dir_out = PC;
+    assign SP_Dir = SP;
+
+    always @(negedge clk) begin
+        if (rst_n) begin
+            A <= (A_L_ready) ? bus : A;
+            B <= (B_L_ready) ? bus : B;
+            S <= (S_L_ready) ? S_Dir_ALU : S;
+            PC <= (PC_Dir_L_ready) ? PC_Dir : PC;
+        end
+    end
+
+    always @(posedge clk) begin
+        if (rst_n) begin
+            A_L_ready <= A_L;
+            B_L_ready <= B_L;
+            S_L_ready <= S_L_ALU;
+            PC_Dir_L_ready <= PC_Dir_L;
+            if (PC_inc)
+                PC <= PC + 1;
+            if (SP_action == 2'b01) begin
+                SP <= SP - 1;
+            end else if (SP_action == 2'b10) begin
+                SP <= SP + 1;
+            end
+        end else begin
+            PC <= 16'd0;
+        end
+    end
+
+    always @(posedge rst_n) begin
+        A <= 8'b0;
+        B <= 8'b0;
+        S <= 8'b0;
+        PC <= 16'b0;
+        SP <= 8'hFF;
+
+        A_L_ready <= 0;
+        B_L_ready <= 0;
+        S_L_ready <= 0;
+        PC_Dir_L_ready <= 0;
+    end
+endmodule
